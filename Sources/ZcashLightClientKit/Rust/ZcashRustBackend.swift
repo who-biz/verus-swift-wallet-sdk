@@ -332,7 +332,17 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
 
     @DBActor
     func initDataDb(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?) async throws -> DbInitResult {
-        let initResult = zcashlc_init_data_database(dbData.0, dbData.1, transparent_key, UInt(transparent_key?.count ?? 0), extsk, UInt(extsk?.count ?? 0), seed, UInt(seed?.count ?? 0), networkType.networkId)
+        let initResult = zcashlc_init_data_database(
+            dbData.0,
+            dbData.1,
+            transparent_key,
+            UInt(transparent_key?.count ?? 0),
+            extsk,
+            UInt(extsk?.count ?? 0),
+            seed,
+            UInt(seed?.count ?? 0),
+            networkType.networkId
+        )
 
         switch initResult {
         case 0: // ok

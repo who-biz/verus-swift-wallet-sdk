@@ -23,7 +23,9 @@ public protocol ClosureSynchronizer {
     var eventStream: AnyPublisher<SynchronizerEvent, Never> { get }
 
     func prepare(
-        with seed: [UInt8]?,
+        transparent_key: [UInt8]?,
+        extsk: [UInt8]?,
+        seed: [UInt8]?,
         walletBirthday: BlockHeight,
         for walletMode: WalletInitMode,
         completion: @escaping (Result<Initializer.InitializationResult, Error>) -> Void

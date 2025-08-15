@@ -116,7 +116,7 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
         transparent_key: [UInt8],
         extsk: [UInt8],
         seed: [UInt8],
-        accountIndex: Zip32AccountIndex
+        accountIndex: Int
     ) throws -> UnifiedSpendingKey {
         
         // Must have at least one non-empty input

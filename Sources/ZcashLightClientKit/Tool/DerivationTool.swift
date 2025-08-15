@@ -83,7 +83,7 @@ public class DerivationTool: KeyDeriving {
     /// - Returns: the spending keys that correspond to the seed, formatted as Strings.
     public func deriveUnifiedSpendingKey(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8], accountIndex: Int) throws -> UnifiedSpendingKey {
         guard accountIndex >= 0, let accountIndex = Int32(exactly: accountIndex) else { throw ZcashError.derivationToolSpendingKeyInvalidAccount }
-        return try backend.deriveUnifiedSpendingKey(from: seed, accountIndex: accountIndex)
+        return try backend.deriveUnifiedSpendingKey(transparent_key: transparent_key, extsk: extsk, seed: seed, accountIndex: accountIndex)
     }
 
     public func receiverTypecodesFromUnifiedAddress(_ address: UnifiedAddress) throws -> [UnifiedAddress.ReceiverTypecodes] {

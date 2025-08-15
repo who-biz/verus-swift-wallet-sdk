@@ -124,7 +124,9 @@ public protocol Synchronizer: AnyObject {
     ///                                won't do anything.
     ///     - Some other `ZcashError` thrown by lower layer of the SDK.
     func prepare(
-        with seed: [UInt8]?,
+        transparent_key: [UInt8]?,
+        extsk: [UInt8]?,
+        seed: [UInt8]?,
         walletBirthday: BlockHeight,
         for walletMode: WalletInitMode
     ) async throws -> Initializer.InitializationResult
@@ -360,7 +362,7 @@ public protocol Synchronizer: AnyObject {
     /// Checks whether the given seed is relevant to any of the derived accounts in the wallet.
     ///
     /// - parameter seed: byte array of the seed
-    func isSeedRelevantToAnyDerivedAccount(seed: [UInt8]) async throws -> Bool
+    func isSeedRelevantToAnyDerivedAccount(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8]) async throws -> Bool
 }
 
 public enum SyncStatus: Equatable {
