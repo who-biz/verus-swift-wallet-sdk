@@ -73,7 +73,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
     }
 
     @DBActor
-    func createAccount(seed: [UInt8], treeState: TreeState, recoverUntil: UInt32?) async throws -> UnifiedSpendingKey {
+    func createAccount(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8], treeState: TreeState, recoverUntil: UInt32?) async throws -> UnifiedSpendingKey {
         var rUntil: Int64 = -1
         
         if let recoverUntil {
@@ -85,6 +85,10 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
         let ffiBinaryKeyPtr = zcashlc_create_account(
             dbData.0,
             dbData.1,
+            transparent_key,
+            UInt(transparent_key.count),
+            extsk,
+            UInt(extsk.count),
             seed,
             UInt(seed.count),
             treeStateBytes,
@@ -103,10 +107,14 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
     }
 
     @DBActor
-    func isSeedRelevantToAnyDerivedAccount(seed: [UInt8]) async throws -> Bool {
+    func isSeedRelevantToAnyDerivedAccount(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8]) async throws -> Bool {
         let result = zcashlc_is_seed_relevant_to_any_derived_account(
             dbData.0,
             dbData.1,
+            transparent_key,
+            UInt(transparent_key.count),
+            extsk,
+            UInt(extsk.count),
             seed,
             UInt(seed.count),
             networkType.networkId
@@ -323,8 +331,8 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
     }
 
     @DBActor
-    func initDataDb(seed: [UInt8]?) async throws -> DbInitResult {
-        let initResult = zcashlc_init_data_database(dbData.0, dbData.1, seed, UInt(seed?.count ?? 0), networkType.networkId)
+    func initDataDb(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?) async throws -> DbInitResult {
+        let initResult = zcashlc_init_data_database(dbData.0, dbData.1, transparent_key, UInt(transparent_key?.count ?? 0), extsk, UInt(extsk?.count ?? 0), seed, UInt(seed?.count ?? 0), networkType.networkId)
 
         switch initResult {
         case 0: // ok

@@ -112,8 +112,45 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
     }
 
     // MARK: Address Derivation
-
     func deriveUnifiedSpendingKey(
+        transparent_key: [UInt8],
+        extsk: [UInt8],
+        seed: [UInt8],
+        accountIndex: Zip32AccountIndex
+    ) throws -> UnifiedSpendingKey {
+        
+        // Must have at least one non-empty input
+        guard !extsk.isEmpty || !seed.isEmpty else {
+            throw ZcashError.rustDeriveUnifiedSpendingKey(
+                "Both `extsk` and `seed` are empty — cannot derive unified spending key."
+            )
+        }
+        
+        let boxedSlicePtr = extsk.withUnsafeBufferPointer { extskBufferPtr in
+            seed.withUnsafeBufferPointer { seedBufferPtr in
+                zcashlc_derive_spending_key(
+                    nil, UInt(0),
+                    extskBufferPtr.baseAddress, UInt(extsk.count),
+                    seedBufferPtr.baseAddress, UInt(seed.count),
+                    accountIndex,
+                    networkType.networkId
+                )
+            }
+        }
+        
+        defer { zcashlc_free_boxed_slice(boxedSlicePtr) }
+        
+        guard let boxedSlice = boxedSlicePtr?.pointee else {
+            throw ZcashError.rustDeriveUnifiedSpendingKey(
+                ZcashKeyDerivationBackend.lastErrorMessage(
+                    fallback: "`deriveUnifiedSpendingKey` failed with unknown error"
+                )
+            )
+        }
+        
+        return boxedSlice.unsafeToUnifiedSpendingKey(network: networkType)
+    }
+/*    func deriveUnifiedSpendingKey(
         from seed: [UInt8],
         accountIndex: Int32
     ) throws -> UnifiedSpendingKey {
@@ -133,7 +170,7 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
         }
 
         return binaryKey.unsafeToUnifiedSpendingKey(network: networkType)
-    }
+    }*/
     
     func deriveUnifiedFullViewingKey(from spendingKey: UnifiedSpendingKey) throws -> UnifiedFullViewingKey {
         let extfvk = try spendingKey.bytes.withUnsafeBufferPointer { uskBufferPtr -> UnsafeMutablePointer<CChar> in
