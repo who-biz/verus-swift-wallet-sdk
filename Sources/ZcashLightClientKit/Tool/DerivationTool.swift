@@ -24,7 +24,7 @@ public protocol KeyDeriving {
     ///     - `derivationToolSpendingKeyInvalidAccount` if the `accountIndex` is invalid.
     ///     - some `ZcashError.rust*` error if the derivation fails.
     /// - Returns a `UnifiedSpendingKey`
-    func deriveUnifiedSpendingKey(seed: [UInt8], accountIndex: Int) throws -> UnifiedSpendingKey
+    func deriveUnifiedSpendingKey(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8], accountIndex: Zip32AccountIndex) throws -> UnifiedSpendingKey
 
     /// Given a spending key, return the associated viewing key.
     /// - Parameter spendingKey: the `UnifiedSpendingKey` from which to derive the `UnifiedFullViewingKey` from.
@@ -81,7 +81,7 @@ public class DerivationTool: KeyDeriving {
     /// - Parameter numberOfAccounts: the number of accounts to use. Multiple accounts are not fully
     /// supported so the default value of 1 is recommended.
     /// - Returns: the spending keys that correspond to the seed, formatted as Strings.
-    public func deriveUnifiedSpendingKey(seed: [UInt8], accountIndex: Int) throws -> UnifiedSpendingKey {
+    public func deriveUnifiedSpendingKey(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8], accountIndex: Int) throws -> UnifiedSpendingKey {
         guard accountIndex >= 0, let accountIndex = Int32(exactly: accountIndex) else { throw ZcashError.derivationToolSpendingKeyInvalidAccount }
         return try backend.deriveUnifiedSpendingKey(from: seed, accountIndex: accountIndex)
     }
