@@ -32,12 +32,14 @@ extension CombineSDKSynchronizer: CombineSynchronizer {
     public var eventStream: AnyPublisher<SynchronizerEvent, Never> { synchronizer.eventStream }
 
     public func prepare(
-        with seed: [UInt8]?,
+        transparent_key: [UInt8]?,
+        extsk: [UInt8]?,
+        seed: [UInt8]?,
         walletBirthday: BlockHeight,
         for walletMode: WalletInitMode
     ) -> SinglePublisher<Initializer.InitializationResult, Error> {
         AsyncToCombineGateway.executeThrowingAction() {
-            return try await self.synchronizer.prepare(with: seed, walletBirthday: walletBirthday, for: walletMode)
+            return try await self.synchronizer.prepare(transparent_key: transparent_key, extsk: extsk, seed: seed, walletBirthday: walletBirthday, for: walletMode)
         }
     }
 

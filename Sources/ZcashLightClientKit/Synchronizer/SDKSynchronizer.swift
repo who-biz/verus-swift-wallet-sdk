@@ -122,7 +122,9 @@ public class SDKSynchronizer: Synchronizer {
     }
 
     public func prepare(
-        with seed: [UInt8]?,
+        transparent_key: [UInt8]?,
+        extsk: [UInt8]?,
+        seed: [UInt8]?,
         walletBirthday: BlockHeight,
         for walletMode: WalletInitMode
     ) async throws -> Initializer.InitializationResult {
@@ -132,6 +134,7 @@ public class SDKSynchronizer: Synchronizer {
             throw error
         }
 
+        //TODO: look into seedRequired case below. Don't recall seeing this in rust layer
         if case .seedRequired = try await self.initializer.initialize(with: seed, walletBirthday: walletBirthday, for: walletMode) {
             return .seedRequired
         }
@@ -607,8 +610,8 @@ public class SDKSynchronizer: Synchronizer {
         return subject.eraseToAnyPublisher()
     }
 
-    public func isSeedRelevantToAnyDerivedAccount(seed: [UInt8]) async throws -> Bool {
-        try await initializer.rustBackend.isSeedRelevantToAnyDerivedAccount(seed: seed)
+    public func isSeedRelevantToAnyDerivedAccount(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8]) async throws -> Bool {
+        try await initializer.rustBackend.isSeedRelevantToAnyDerivedAccount(transparent_key: transparent_key, extsk: extsk, seed: seed)
     }
 
     // MARK: Server switch
