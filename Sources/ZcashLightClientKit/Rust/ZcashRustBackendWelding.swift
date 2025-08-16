@@ -88,14 +88,14 @@ protocol ZcashRustBackendWelding {
     /// - parameter outputPool: output pool identifier (2 = Sapling, 3 = Orchard)
     /// - parameter outputIndex: output index of note
     func getMemo(txId: Data, outputPool: UInt32, outputIndex: UInt16) async throws -> Memo?
-
+/*
     /// Get the verified cached transparent balance for the given address
     /// - parameter account; the account index to query
     /// - Throws:
     ///     - `rustGetTransparentBalanceNegativeAccount` if `account` is < 0.
-    ///     - `rustGetTransparentBalance` if rust layer returns error.
+    ///     - `rustGetTransparentBalance` if rust layer returns error
     func getTransparentBalance(account: Int32) async throws -> Int64
-
+*/
     /// Initializes the data db. This will performs any migrations needed on the sqlite file
     /// provided. Some migrations might need that callers provide the seed bytes.
     /// - Parameter seed: ZIP-32 compliant seed bytes for this wallet
@@ -104,7 +104,7 @@ protocol ZcashRustBackendWelding {
     /// in order to be completed successfully.
     /// Throws `rustInitDataDb` if rust layer returns error.
     func initDataDb(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?) async throws -> DbInitResult
-
+/*
     /// Returns a list of the transparent receivers for the diversified unified addresses that have
     /// been allocated for the provided account.
     /// - parameter account: index of the given account
@@ -119,7 +119,7 @@ protocol ZcashRustBackendWelding {
     ///     - `rustGetVerifiedTransparentBalanceNegativeAccount` if `account` is < 0.
     ///     - `rustGetVerifiedTransparentBalance` if rust layer returns error.
     func getVerifiedTransparentBalance(account: Int32) async throws -> Int64
-
+*/
     /// Resets the state of the database to only contain block and transaction information up to the given height. clears up all derived data as well
     /// - parameter height: height to rewind to.
     /// - Throws: `rustRewindToHeight` if rust layer returns error.
@@ -130,11 +130,11 @@ protocol ZcashRustBackendWelding {
     /// - parameter height: height to rewind to. DON'T PASS ARBITRARY HEIGHT. Use `getNearestRewindHeight` when unsure
     /// - Throws: `rustRewindCacheToHeight` if rust layer returns error.
     func rewindCacheToHeight(height: Int32) async throws
-
+/*
     func putSaplingSubtreeRoots(startIndex: UInt64, roots: [SubtreeRoot]) async throws
 
     func putOrchardSubtreeRoots(startIndex: UInt64, roots: [SubtreeRoot]) async throws
-
+*/
     /// Updates the wallet's view of the blockchain.
     ///
     /// This method is used to provide the wallet with information about the state of the blockchain,
@@ -190,7 +190,7 @@ protocol ZcashRustBackendWelding {
     /// - parameter limit: scan up to limit blocks.
     /// - Throws: `rustScanBlocks` if rust layer returns error.
     func scanBlocks(fromHeight: Int32, fromState: TreeState, limit: UInt32) async throws -> ScanSummary
-
+/*
     /// Upserts a UTXO into the data db database
     /// - parameter txid: the txid bytes for the UTXO
     /// - parameter index: the index of the UTXO
@@ -205,6 +205,7 @@ protocol ZcashRustBackendWelding {
         value: Int64,
         height: BlockHeight
     ) async throws
+ */
 
     /// Select transaction inputs, compute fees, and construct a proposal for a transaction
     /// that can then be authorized and made ready for submission to the network with
@@ -251,13 +252,13 @@ protocol ZcashRustBackendWelding {
     ///             will select whichever of the account's transparent receivers has funds
     ///             to shield.
     /// - Throws: `rustShieldFunds` if rust layer returns error.
-    func proposeShielding(
+/*    func proposeShielding(
         account: Int32,
         memo: MemoBytes?,
         shieldingThreshold: Zatoshi,
         transparentReceiver: String?
     ) async throws -> FfiProposal?
-
+*/
     /// Creates a transaction from the given proposal.
     /// - Parameter proposal: the transaction proposal.
     /// - Parameter usk: `UnifiedSpendingKey` for the account that controls the funds to be spent.

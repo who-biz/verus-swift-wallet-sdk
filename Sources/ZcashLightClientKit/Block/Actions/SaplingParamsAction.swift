@@ -24,7 +24,7 @@ extension SaplingParamsAction: Action {
         logger.debug("Fetching sapling parameters")
         try await saplingParametersHandler.handleIfNeeded()
         
-        await context.update(state: .updateSubtreeRoots)
+        //await context.update(state: .updateSubtreeRoots)
         
         return context
     }

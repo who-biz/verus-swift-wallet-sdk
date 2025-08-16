@@ -40,7 +40,7 @@ extension UpdateChainTipAction: Action {
         let now = Date().timeIntervalSince1970
 
         // Update chain tip can be called from different contexts
-        if await context.prevState == .updateSubtreeRoots || now - lastChainTipUpdateTime > 600 {
+        if /*await context.prevState == .updateSubtreeRoots ||*/ (now - lastChainTipUpdateTime > 600) {
             await downloader.stopDownload()
             try await updateChainTip(context, time: now)
             await context.update(state: .clearCache)

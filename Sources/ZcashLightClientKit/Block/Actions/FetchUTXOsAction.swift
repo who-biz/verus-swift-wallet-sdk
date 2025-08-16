@@ -7,6 +7,7 @@
 
 import Foundation
 
+/*
 final class FetchUTXOsAction {
     var utxoFetcher: UTXOFetcher
     let logger: Logger
@@ -31,3 +32,4 @@ extension FetchUTXOsAction: Action {
 
     func stop() async { }
 }
+*/

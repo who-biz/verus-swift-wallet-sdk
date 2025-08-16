@@ -94,7 +94,7 @@ extension CombineSDKSynchronizer: CombineSynchronizer {
         }
     }
 
-    public func proposeShielding(
+ /*   public func proposeShielding(
         accountIndex: Int,
         shieldingThreshold: Zatoshi,
         memo: Memo,
@@ -109,7 +109,7 @@ extension CombineSDKSynchronizer: CombineSynchronizer {
             )
         }
     }
-
+*/
     public func createProposedTransactions(
         proposal: Proposal,
         spendingKey: UnifiedSpendingKey
@@ -131,7 +131,7 @@ extension CombineSDKSynchronizer: CombineSynchronizer {
         }
     }
 
-    @available(*, deprecated, message: "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.")
+    /*@available(*, deprecated, message: "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.")
     public func shieldFunds(
         spendingKey: UnifiedSpendingKey,
         memo: Memo,
@@ -140,7 +140,7 @@ extension CombineSDKSynchronizer: CombineSynchronizer {
         AsyncToCombineGateway.executeThrowingAction() {
             try await self.synchronizer.shieldFunds(spendingKey: spendingKey, memo: memo, shieldingThreshold: shieldingThreshold)
         }
-    }
+    }*/
 
     public var allTransactions: SinglePublisher<[ZcashTransaction.Overview], Never> {
         AsyncToCombineGateway.executeAction() {
@@ -186,12 +186,12 @@ extension CombineSDKSynchronizer: CombineSynchronizer {
         }
     }
 
-    public func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) -> SinglePublisher<RefreshedUTXOs, Error> {
+/*    public func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) -> SinglePublisher<RefreshedUTXOs, Error> {
         AsyncToCombineGateway.executeThrowingAction() {
             try await self.synchronizer.refreshUTXOs(address: address, from: height)
         }
     }
-
+*/
     public func getAccountBalance(accountIndex: Int) -> SinglePublisher<AccountBalance?, Error> {
         AsyncToCombineGateway.executeThrowingAction() {
             try await self.synchronizer.getAccountBalance(accountIndex: accountIndex)

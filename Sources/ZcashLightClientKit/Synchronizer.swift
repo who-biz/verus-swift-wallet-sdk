@@ -188,13 +188,13 @@ public protocol Synchronizer: AnyObject {
     ///
     /// If `prepare()` hasn't already been called since creation of the synchronizer instance or since the last wipe then this method throws
     /// `SynchronizerErrors.notPrepared`.
-    func proposeShielding(
+  /*  func proposeShielding(
         accountIndex: Int,
         shieldingThreshold: Zatoshi,
         memo: Memo,
         transparentReceiver: TransparentAddress?
     ) async throws -> Proposal?
-
+*/
     /// Creates the transactions in the given proposal.
     ///
     /// - Parameter proposal: the proposal for which to create transactions.
@@ -245,13 +245,13 @@ public protocol Synchronizer: AnyObject {
     ///
     /// - Note: If `prepare()` hasn't already been called since creating of synchronizer instance or since the last wipe then this method throws
     /// `SynchronizerErrors.notPrepared`.
-    @available(*, deprecated, message: "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.")
+  /*  @available(*, deprecated, message: "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.")
     func shieldFunds(
         spendingKey: UnifiedSpendingKey,
         memo: Memo,
         shieldingThreshold: Zatoshi
     ) async throws -> ZcashTransaction.Overview
-
+*/
     /// all the transactions that are on the blockchain
     var transactions: [ZcashTransaction.Overview] { get async }
 
@@ -304,7 +304,7 @@ public protocol Synchronizer: AnyObject {
     ///
     /// If `prepare()` hasn't already been called since creation of the synchronizer instance or since the last wipe then this method throws
     /// `SynchronizerErrors.notPrepared`.
-    func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) async throws -> RefreshedUTXOs
+//    func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) async throws -> RefreshedUTXOs
 
     /// Account balances from the given account index
     /// - Parameter accountIndex: the index of the account

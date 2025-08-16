@@ -9,6 +9,8 @@ import Foundation
 import libzcashlc
 
 struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
+
+    
     let networkType: NetworkType
 
     // MARK: Address metadata and validation
@@ -113,42 +115,43 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
 
     // MARK: Address Derivation
     func deriveUnifiedSpendingKey(
-        transparent_key: [UInt8],
-        extsk: [UInt8],
-        seed: [UInt8],
-        accountIndex: Int
+        transparent_key: [UInt8]?,
+        extsk: [UInt8]?,
+        seed: [UInt8]?,
+        accountIndex: Int32
     ) throws -> UnifiedSpendingKey {
-        
-        // Must have at least one non-empty input
-        guard !extsk.isEmpty || !seed.isEmpty else {
+
+        guard !(transparent_key?.isEmpty ?? true)
+                || !(extsk?.isEmpty ?? true)
+                || !(seed?.isEmpty ?? true) else {
             throw ZcashError.rustDeriveUnifiedSpendingKey(
-                "Both `extsk` and `seed` are empty — cannot derive unified spending key."
+                "All input arrays (`transparent_key`, `extsk`, `seed`) are empty — cannot derive unified spending key."
             )
         }
-        
-        let boxedSlicePtr = extsk.withUnsafeBufferPointer { extskBufferPtr in
-            seed.withUnsafeBufferPointer { seedBufferPtr in
-                zcashlc_derive_spending_key(
-                    nil, UInt(0),
-                    extskBufferPtr.baseAddress, UInt(extsk.count),
-                    seedBufferPtr.baseAddress, UInt(seed.count),
-                    accountIndex,
-                    networkType.networkId
-                )
+
+        let binaryKeyPtr = transparent_key!.withUnsafeBufferPointer { transparentBufferPtr in
+            extsk!.withUnsafeBufferPointer { extskBufferPtr in
+                seed!.withUnsafeBufferPointer { seedBufferPtr in
+                    zcashlc_derive_spending_key(
+                        transparentBufferPtr.baseAddress, UInt(transparent_key!.count),
+                        extskBufferPtr.baseAddress, UInt(extsk!.count),
+                        seedBufferPtr.baseAddress, UInt(seed!.count),
+                        accountIndex,
+                        networkType.networkId
+                    )
+                }
             }
         }
-        
-        defer { zcashlc_free_boxed_slice(boxedSlicePtr) }
-        
-        guard let boxedSlice = boxedSlicePtr?.pointee else {
+
+        defer { zcashlc_free_binary_key(binaryKeyPtr) }
+
+        guard let binaryKey = binaryKeyPtr?.pointee else {
             throw ZcashError.rustDeriveUnifiedSpendingKey(
-                ZcashKeyDerivationBackend.lastErrorMessage(
-                    fallback: "`deriveUnifiedSpendingKey` failed with unknown error"
-                )
+                lastErrorMessage(fallback: "`deriveUnifiedSpendingKey` failed with unknown error")
             )
         }
-        
-        return boxedSlice.unsafeToUnifiedSpendingKey(network: networkType)
+
+        return binaryKey.unsafeToUnifiedSpendingKey(network: networkType)
     }
 /*    func deriveUnifiedSpendingKey(
         from seed: [UInt8],

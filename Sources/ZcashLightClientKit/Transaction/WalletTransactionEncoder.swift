@@ -71,7 +71,7 @@ class WalletTransactionEncoder: TransactionEncoder {
         return Proposal(inner: proposal)
     }
 
-    func proposeShielding(
+/*    func proposeShielding(
         accountIndex: Int,
         shieldingThreshold: Zatoshi,
         memoBytes: MemoBytes?,
@@ -86,7 +86,7 @@ class WalletTransactionEncoder: TransactionEncoder {
 
         return Proposal(inner: proposal)
     }
-
+*/
     func proposeFulfillingPaymentFromURI(
         _ uri: String,
         accountIndex: Int

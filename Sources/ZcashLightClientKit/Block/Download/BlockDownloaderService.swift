@@ -45,10 +45,11 @@ protocol BlockDownloaderService {
     */
     func fetchTransaction(txId: Data) async throws -> ZcashTransaction.Fetched
 
-    func fetchUnspentTransactionOutputs(tAddress: String, startHeight: BlockHeight) -> AsyncThrowingStream<UnspentTransactionOutputEntity, Error>
+    /*
+     func fetchUnspentTransactionOutputs(tAddress: String, startHeight: BlockHeight) -> AsyncThrowingStream<UnspentTransactionOutputEntity, Error>
 
     func fetchUnspentTransactionOutputs(tAddresses: [String], startHeight: BlockHeight) -> AsyncThrowingStream<UnspentTransactionOutputEntity, Error>
-    
+    */
     func closeConnection()
 }
 
@@ -75,7 +76,7 @@ extension BlockDownloaderServiceImpl: BlockDownloaderService {
         lightwalletService.closeConnection()
     }
             
-    func fetchUnspentTransactionOutputs(
+    /*func fetchUnspentTransactionOutputs(
         tAddresses: [String],
         startHeight: BlockHeight
     ) -> AsyncThrowingStream<UnspentTransactionOutputEntity, Error> {
@@ -84,7 +85,7 @@ extension BlockDownloaderServiceImpl: BlockDownloaderService {
     
     func fetchUnspentTransactionOutputs(tAddress: String, startHeight: BlockHeight) -> AsyncThrowingStream<UnspentTransactionOutputEntity, Error> {
         lightwalletService.fetchUTXOs(for: tAddress, height: startHeight)
-    }
+    }*/
     
     func latestBlockHeight() async throws -> BlockHeight {
         try await lightwalletService.latestBlockHeight()

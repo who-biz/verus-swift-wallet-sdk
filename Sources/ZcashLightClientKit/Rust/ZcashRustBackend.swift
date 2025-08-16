@@ -10,6 +10,7 @@ import Foundation
 import libzcashlc
 
 struct ZcashRustBackend: ZcashRustBackendWelding {
+    
     let minimumConfirmations: UInt32 = 10
     let minimumShieldingConfirmations: UInt32 = 1
     let useZIP317Fees = true
@@ -283,7 +284,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
         return (try? MemoBytes(contiguousBytes: contiguousMemoBytes)).flatMap { try? $0.intoMemo() }
     }
 
-    @DBActor
+    /*@DBActor
     func getTransparentBalance(account: Int32) async throws -> Int64 {
         guard account >= 0 else {
             throw ZcashError.rustGetTransparentBalanceNegativeAccount(Int(account))
@@ -329,7 +330,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
 
         return balance
     }
-
+*/
     @DBActor
     func initDataDb(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?) async throws -> DbInitResult {
         let initResult = zcashlc_init_data_database(
@@ -435,7 +436,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             throw ZcashError.rustLatestCachedBlockHeight(lastErrorMessage(fallback: "`latestCachedBlockHeight` failed with unknown error"))
         }
     }
-
+/*
     @DBActor
     func listTransparentReceivers(account: Int32) async throws -> [TransparentAddress] {
         let encodedKeysPtr = zcashlc_list_transparent_receivers(
@@ -493,7 +494,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             throw ZcashError.rustPutUnspentTransparentOutput(lastErrorMessage(fallback: "`putUnspentTransparentOutput` failed with unknown error"))
         }
     }
-
+*/
     @DBActor
     func rewindToHeight(height: Int32) async throws {
         let result = zcashlc_rewind_to_height(dbData.0, dbData.1, height, networkType.networkId)
@@ -511,7 +512,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             throw ZcashError.rustRewindCacheToHeight(lastErrorMessage(fallback: "`rewindCacheToHeight` failed with unknown error"))
         }
     }
-
+/*
     @DBActor
     func putSaplingSubtreeRoots(startIndex: UInt64, roots: [SubtreeRoot]) async throws {
         var ffiSubtreeRootsVec: [FfiSubtreeRoot] = []
@@ -625,6 +626,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             }
         }
     }
+ */
 
     @DBActor
     func updateChainTip(height: Int32) async throws {
@@ -752,7 +754,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             receivedSaplingNoteCount: summaryPtr.pointee.received_sapling_note_count
         )
     }
-
+/*
     @DBActor
     func proposeShielding(
         account: Int32,
@@ -787,7 +789,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             count: Int(proposal.pointee.len)
         ))
     }
-
+*/
     @DBActor
     func createProposedTransactions(
         proposal: FfiProposal,
@@ -927,7 +929,7 @@ extension Array where Element == FFIBlockMeta {
         }
     }
 }
-
+/*
 extension Array where Element == FfiSubtreeRoot {
     func deallocateElements() {
         self.forEach { element in
@@ -935,7 +937,7 @@ extension Array where Element == FfiSubtreeRoot {
         }
     }
 }
-
+*/
 extension FfiBalance {
     /// Converts an [`FfiBalance`] into a [`PoolBalance`].
     func toPoolBalance() -> PoolBalance {

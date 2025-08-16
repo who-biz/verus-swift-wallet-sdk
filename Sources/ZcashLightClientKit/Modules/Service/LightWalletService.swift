@@ -174,14 +174,14 @@ protocol LightWalletService: AnyObject {
     /// - Returns: LightWalletServiceResponse
     /// - Throws: `serviceFetchTransactionFailed` when GRPC call fails.
     func fetchTransaction(txId: Data) async throws -> ZcashTransaction.Fetched
-
+/*
     /// - Throws: `serviceFetchUTXOsFailed` when GRPC call fails.
     // sourcery: mockedName="fetchUTXOsSingle"
     func fetchUTXOs(for tAddress: String, height: BlockHeight) -> AsyncThrowingStream<UnspentTransactionOutputEntity, Error>
 
     /// - Throws: `serviceFetchUTXOsFailed` when GRPC call fails.
     func fetchUTXOs(for tAddresses: [String], height: BlockHeight) -> AsyncThrowingStream<UnspentTransactionOutputEntity, Error>
-
+*/
     /// - Throws: `serviceBlockStreamFailed` when GRPC call fails.
     func blockStream(
         startHeight: BlockHeight,
@@ -195,7 +195,7 @@ protocol LightWalletService: AnyObject {
     ///
     /// - Parameters:
     ///   - request: Request to send to GetSubtreeRoots.
-    func getSubtreeRoots(_ request: GetSubtreeRootsArg) -> AsyncThrowingStream<SubtreeRoot, Error>
+//    func getSubtreeRoots(_ request: GetSubtreeRootsArg) -> AsyncThrowingStream<SubtreeRoot, Error>
 
     func getTreeState(_ id: BlockID) async throws -> TreeState
 }

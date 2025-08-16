@@ -50,13 +50,13 @@ protocol TransactionEncoder {
     ///
     /// If `prepare()` hasn't already been called since creation of the synchronizer instance or since the last wipe then this method throws
     /// `SynchronizerErrors.notPrepared`.
-    func proposeShielding(
+/*    func proposeShielding(
         accountIndex: Int,
         shieldingThreshold: Zatoshi,
         memoBytes: MemoBytes?,
         transparentReceiver: String?
     ) async throws -> Proposal?
-
+*/
     /// Creates the transactions in the given proposal.
     ///
     /// - Parameter proposal: the proposal for which to create transactions.

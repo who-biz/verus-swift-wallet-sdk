@@ -11,7 +11,7 @@ import Combine
 
 /// Synchronizer implementation for UIKit and iOS 13+
 // swiftlint:disable type_body_length
-public class SDKSynchronizer: Synchronizer {
+public class SDKSynchronizer: Synchronizer {    
     
     public var alias: ZcashSynchronizerAlias { initializer.alias }
 
@@ -280,7 +280,7 @@ public class SDKSynchronizer: Synchronizer {
         return proposal
     }
 
-    public func proposeShielding(
+/*    public func proposeShielding(
         accountIndex: Int,
         shieldingThreshold: Zatoshi,
         memo: Memo,
@@ -295,7 +295,7 @@ public class SDKSynchronizer: Synchronizer {
             transparentReceiver: transparentReceiver?.stringEncoded
         )
     }
-
+*/
     public func proposefulfillingPaymentURI(
         _ uri: String,
         accountIndex: Int
@@ -384,7 +384,7 @@ public class SDKSynchronizer: Synchronizer {
         )
     }
 
-    public func shieldFunds(
+    /*public func shieldFunds(
         spendingKey: UnifiedSpendingKey,
         memo: Memo,
         shieldingThreshold: Zatoshi
@@ -423,7 +423,7 @@ public class SDKSynchronizer: Synchronizer {
         try await transactionEncoder.submit(transaction: encodedTx)
 
         return transaction
-    }
+    }*/
 
     func createToAddress(
         spendingKey: UnifiedSpendingKey,
@@ -502,12 +502,12 @@ public class SDKSynchronizer: Synchronizer {
     public func latestHeight() async throws -> BlockHeight {
         try await blockProcessor.latestHeight()
     }
-
+/*
     public func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) async throws -> RefreshedUTXOs {
         try throwIfUnprepared()
         return try await blockProcessor.refreshUTXOs(tAddress: address, startHeight: height)
     }
-
+*/
     public func getAccountBalance(accountIndex: Int = 0) async throws -> AccountBalance? {
         try await initializer.rustBackend.getWalletSummary()?.accountBalances[UInt32(accountIndex)]
     }
