@@ -119,7 +119,13 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
                 "Input ufvk was empty - cannot derive Shielded Address"
             )
         }
-        return zcashlc_derive_shielded_address_from_viewing_key([CChar](ufvk.utf8CString), networkType.networkId)
+        let address = zcashlc_derive_shielded_address_from_viewing_key([CChar](ufvk.utf8CString), networkType.networkId)
+        guard let derived = String(validatingUTF8: address!) else {
+            throw ZcashError.rustDeriveShieldedAddress (
+                "Failed to convert shielded address to Swift String - cannot derive Shielded Address"
+            )
+        }
+        return derived
     }
 
     // MARK: Address Derivation
