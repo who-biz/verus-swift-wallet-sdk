@@ -123,7 +123,7 @@
       "location" : "https://github.com/who-biz/verus-light-client-ffi",
       "state" : {
         "branch" : "verus",
-        "revision" : "b21806c8e64a582a94beda9fa3b391766cb1c40f"
+        "revision" : "7de71ad71b655921787614491e467f9c57ec9068"
       }
     }
   ],

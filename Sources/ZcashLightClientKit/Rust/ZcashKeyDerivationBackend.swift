@@ -112,6 +112,15 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
 
         return zcashlc_is_valid_unified_full_viewing_key([CChar](key.utf8CString), networkType.networkId)
     }
+    
+    func deriveShieldedAddress(_ ufvk: String) throws -> String {
+        guard !ufvk.containsCStringNullBytesBeforeStringEnding() else {
+            throw ZcashError.rustDeriveShieldedAddress(
+                "Input ufvk was empty - cannot derive Shielded Address"
+            )
+        }
+        return zcashlc_derive_shielded_address_from_viewing_key([CChar](ufvk.utf8CString))
+    }
 
     // MARK: Address Derivation
     func deriveUnifiedSpendingKey(

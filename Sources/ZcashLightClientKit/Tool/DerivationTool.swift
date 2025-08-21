@@ -26,6 +26,8 @@ public protocol KeyDeriving {
     /// - Returns a `UnifiedSpendingKey`
     func deriveUnifiedSpendingKey(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?, accountIndex: Int) throws -> UnifiedSpendingKey
 
+    func deriveShieldedAddress(from ufvk: String) throws -> String
+    
     /// Given a spending key, return the associated viewing key.
     /// - Parameter spendingKey: the `UnifiedSpendingKey` from which to derive the `UnifiedFullViewingKey` from.
     /// - Throws: some `ZcashError.rust*` error if the derivation fails.
@@ -69,6 +71,10 @@ public class DerivationTool: KeyDeriving {
 
     public static func getAddressMetadata(_ addr: String) -> AddressMetadata? {
         ZcashKeyDerivationBackend.getAddressMetadata(addr)
+    }
+    
+    public func deriveShieldedAddress(from ufvk: String) throws -> String {
+        try backend.deriveShieldedAddress(ufvk)
     }
 
     /// Given a spending key, return the associated viewing key.
