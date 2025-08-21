@@ -119,7 +119,7 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
                 "Input ufvk was empty - cannot derive Shielded Address"
             )
         }
-        return zcashlc_derive_shielded_address_from_viewing_key([CChar](ufvk.utf8CString))
+        return zcashlc_derive_shielded_address_from_viewing_key([CChar](ufvk.utf8CString), networkType.networkId)
     }
 
     // MARK: Address Derivation
