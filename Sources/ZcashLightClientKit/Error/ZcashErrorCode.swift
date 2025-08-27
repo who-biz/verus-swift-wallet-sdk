@@ -188,6 +188,8 @@ public enum ZcashErrorCode: String {
     /// SQLite query failed when fetching all accounts from the database.
     case rustDeriveShieldedAddress = "ZRUST0062"
     ///  Error from rust layer when calling ZcashRustBackend.deriveShieldedAddress
+    case rustDeriveSaplingSpendingKey = "ZRUST0063"
+    ///  Error from rust layer when calling ZcashRustBackend.deriveSaplingSpendingKey
     case accountDAOGetAll = "ZADAO0001"
     /// Fetched accounts from SQLite but can't decode them.
     case accountDAOGetAllCantDecode = "ZADAO0002"

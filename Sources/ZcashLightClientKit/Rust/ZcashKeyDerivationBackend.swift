@@ -168,6 +168,39 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
 
         return binaryKey.unsafeToUnifiedSpendingKey(network: networkType)
     }
+    
+    func deriveSaplingSpendingKey(
+        seed: [UInt8],
+        accountIndex: Int32
+    ) throws -> SaplingExtendedSpendingKey {
+
+        guard !(seed?.isEmpty ?? true) else {
+            throw ZcashError.rustDeriveSaplingSpendingKey(
+                "Input array (`seed`) is empty — cannot derive sapling spending key."
+            )
+        }
+
+        let binaryKeyPtr = seed!.withUnsafeBufferPointer { seedBufferPtr in
+                    zcashlc_derive_shielded_spending_key(
+                        seedBufferPtr.baseAddress, UInt(seed.count),
+                        accountIndex,
+                        networkType.networkId
+                    )
+                }
+            }
+        }
+
+        defer { zcashlc_free_binary_key(binaryKeyPtr) }
+
+        guard let binaryKey = binaryKeyPtr?.pointee else {
+            throw ZcashError.rustDeriveSaplingSpendingKey(
+                lastErrorMessage(fallback: "`deriveSaplingSpendingKey` failed with unknown error")
+            )
+        }
+
+        return binaryKey.unsafeToSaplingSpendingKey(network: networkType)
+    }
+
 /*    func deriveUnifiedSpendingKey(
         from seed: [UInt8],
         accountIndex: Int32

@@ -907,6 +907,16 @@ extension FFIBinaryKey {
             account: self.account_id
         )
     }
+    
+    func unsafeToSaplingSpendingKey(network: NetworkType) -> SaplingExtendedSpendingKey {
+        .init(
+            network: network,
+            bytes: self.encoding.toByteArray(
+                length: Int(self.encoding_len)
+            ),
+            account: self.account_id
+        )
+    }
 }
 
 extension UnsafeMutablePointer where Pointee == UInt8 {
