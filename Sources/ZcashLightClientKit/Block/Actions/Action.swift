@@ -62,7 +62,7 @@ enum CBPState: CaseIterable {
     case idle
     case migrateLegacyCacheDB
     case validateServer
-    //case updateSubtreeRoots
+    case updateSubtreeRoots
     case updateChainTip
     case processSuggestedScanRanges
     case rewind
@@ -70,7 +70,7 @@ enum CBPState: CaseIterable {
     case scan
     case clearAlreadyScannedBlocks
     case enhance
-    //case fetchUTXO
+    case fetchUTXO
     case handleSaplingParams
     case clearCache
     case finished

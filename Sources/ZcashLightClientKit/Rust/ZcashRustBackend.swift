@@ -284,7 +284,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
         return (try? MemoBytes(contiguousBytes: contiguousMemoBytes)).flatMap { try? $0.intoMemo() }
     }
 
-    /*@DBActor
+    @DBActor
     func getTransparentBalance(account: Int32) async throws -> Int64 {
         guard account >= 0 else {
             throw ZcashError.rustGetTransparentBalanceNegativeAccount(Int(account))
@@ -330,7 +330,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
 
         return balance
     }
-*/
+
     @DBActor
     func initDataDb(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?) async throws -> DbInitResult {
         let initResult = zcashlc_init_data_database(
@@ -436,7 +436,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             throw ZcashError.rustLatestCachedBlockHeight(lastErrorMessage(fallback: "`latestCachedBlockHeight` failed with unknown error"))
         }
     }
-/*
+
     @DBActor
     func listTransparentReceivers(account: Int32) async throws -> [TransparentAddress] {
         let encodedKeysPtr = zcashlc_list_transparent_receivers(
@@ -494,7 +494,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             throw ZcashError.rustPutUnspentTransparentOutput(lastErrorMessage(fallback: "`putUnspentTransparentOutput` failed with unknown error"))
         }
     }
-*/
+
     @DBActor
     func rewindToHeight(height: Int32) async throws {
         let result = zcashlc_rewind_to_height(dbData.0, dbData.1, height, networkType.networkId)
@@ -512,7 +512,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             throw ZcashError.rustRewindCacheToHeight(lastErrorMessage(fallback: "`rewindCacheToHeight` failed with unknown error"))
         }
     }
-/*
+
     @DBActor
     func putSaplingSubtreeRoots(startIndex: UInt64, roots: [SubtreeRoot]) async throws {
         var ffiSubtreeRootsVec: [FfiSubtreeRoot] = []
@@ -626,7 +626,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             }
         }
     }
- */
+ 
 
     @DBActor
     func updateChainTip(height: Int32) async throws {
@@ -939,7 +939,7 @@ extension Array where Element == FFIBlockMeta {
         }
     }
 }
-/*
+
 extension Array where Element == FfiSubtreeRoot {
     func deallocateElements() {
         self.forEach { element in
@@ -947,7 +947,7 @@ extension Array where Element == FfiSubtreeRoot {
         }
     }
 }
-*/
+
 extension FfiBalance {
     /// Converts an [`FfiBalance`] into a [`PoolBalance`].
     func toPoolBalance() -> PoolBalance {

@@ -88,7 +88,7 @@ class LightWalletGRPCService {
     ///  - streamingCallTimeout: Timeout for streaming calls in milliseconds.
     init(
         host: String,
-        port: Int = 9067,
+        port: Int = 443,
         secure: Bool = true,
         singleCallTimeout: Int64,
         streamingCallTimeout: Int64

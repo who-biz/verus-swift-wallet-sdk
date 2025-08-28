@@ -23,7 +23,7 @@ public extension ConsensusBranchID {
 extension NetworkType {
     init?(_ string: String) {
         switch string {
-        case "main":
+        case "VRSC":
             self = .mainnet
         case "test":
             self = .testnet

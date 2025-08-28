@@ -176,7 +176,7 @@ public extension NetworkConstants {
 public enum ZcashSDKMainnetConstants: NetworkConstants {
     /// The height of the first sapling block. When it comes to shielded transactions, we do not need to consider any blocks
     /// prior to this height, at all.
-    public static let saplingActivationHeight: BlockHeight = 419_200
+    public static let saplingActivationHeight: BlockHeight = 227_520
 
     /// Default Name for LibRustZcash data.db
     public static let defaultDataDbName = "data.db"

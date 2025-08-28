@@ -641,8 +641,8 @@ extension CompactBlockProcessor {
             break
         case .validateServer:
             break
-//        case .updateSubtreeRoots:
-//            break
+        case .updateSubtreeRoots:
+            break
         case .updateChainTip:
             break
         case .processSuggestedScanRanges:
@@ -657,8 +657,8 @@ extension CompactBlockProcessor {
             break
         case .enhance:
             await send(event: .startedEnhancing)
-//        case .fetchUTXO:
-//            await send(event: .startedFetching)
+        case .fetchUTXO:
+            await send(event: .startedFetching)
         case .handleSaplingParams:
             break
         case .clearCache:
@@ -838,7 +838,7 @@ extension CompactBlockProcessor {
     }
 }
 
-/*extension CompactBlockProcessor {
+extension CompactBlockProcessor {
     func refreshUTXOs(tAddress: TransparentAddress, startHeight: BlockHeight) async throws -> RefreshedUTXOs {
         let dataDb = self.config.dataDb
         
@@ -879,7 +879,7 @@ extension CompactBlockProcessor {
         }
         return (inserted: refreshed, skipped: skipped)
     }
-}*/
+}
 
 // MARK: - Config provider
 
