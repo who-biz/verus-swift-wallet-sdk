@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import libzcashlc
+
 
 struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
 
@@ -174,20 +174,12 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
         accountIndex: Int32
     ) throws -> SaplingExtendedSpendingKey {
 
-        guard !(seed?.isEmpty ?? true) else {
-            throw ZcashError.rustDeriveSaplingSpendingKey(
-                "Input array (`seed`) is empty — cannot derive sapling spending key."
+        let binaryKeyPtr = seed.withUnsafeBufferPointer { seedBufferPtr in
+            zcashlc_derive_shielded_spending_key(
+                seedBufferPtr.baseAddress, UInt(seed.count),
+                accountIndex,
+                networkType.networkId
             )
-        }
-
-        let binaryKeyPtr = seed!.withUnsafeBufferPointer { seedBufferPtr in
-                    zcashlc_derive_shielded_spending_key(
-                        seedBufferPtr.baseAddress, UInt(seed.count),
-                        accountIndex,
-                        networkType.networkId
-                    )
-                }
-            }
         }
 
         defer { zcashlc_free_binary_key(binaryKeyPtr) }
@@ -300,3 +292,4 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
         }
     }
 }
+
