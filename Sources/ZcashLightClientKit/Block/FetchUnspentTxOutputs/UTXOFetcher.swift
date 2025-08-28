@@ -5,7 +5,7 @@
 //  Created by Francisco Gindre on 6/2/21.
 //
 
-/*import Foundation
+import Foundation
 
 enum UTXOFetcherError: Error {
     case clearingFailed(_ error: Error?)
@@ -90,4 +90,4 @@ extension UTXOFetcherImpl: UTXOFetcher {
 
         return result
     }
-}*/
+}

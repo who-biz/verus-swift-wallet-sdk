@@ -200,7 +200,7 @@ extension LightWalletGRPCService: LightWalletService {
         }
     }
 
-    /*func fetchUTXOs(for tAddress: String, height: BlockHeight) -> AsyncThrowingStream<UnspentTransactionOutputEntity, Error> {
+    func fetchUTXOs(for tAddress: String, height: BlockHeight) -> AsyncThrowingStream<UnspentTransactionOutputEntity, Error> {
         return fetchUTXOs(for: [tAddress], height: height)
     }
 
@@ -235,7 +235,7 @@ extension LightWalletGRPCService: LightWalletService {
                 throw ZcashError.serviceFetchUTXOsFailed(serviceError)
             }
         }
-    }*/
+    }
     
     func blockStream(
         startHeight: BlockHeight,
@@ -261,7 +261,7 @@ extension LightWalletGRPCService: LightWalletService {
         }
     }
     
-    /*func getSubtreeRoots(_ request: GetSubtreeRootsArg) -> AsyncThrowingStream<SubtreeRoot, Error> {
+    func getSubtreeRoots(_ request: GetSubtreeRootsArg) -> AsyncThrowingStream<SubtreeRoot, Error> {
         let stream = compactTxStreamer.getSubtreeRoots(request)
         var iterator = stream.makeAsyncIterator()
         
@@ -274,7 +274,7 @@ extension LightWalletGRPCService: LightWalletService {
                 throw ZcashError.serviceSubtreeRootsStreamFailed(serviceError)
             }
         }
-    }*/
+    }
 
     func getTreeState(_ id: BlockID) async throws -> TreeState {
         try await compactTxStreamer.getTreeState(id)

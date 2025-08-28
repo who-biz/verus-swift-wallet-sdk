@@ -21,7 +21,7 @@ final class UpdateSubtreeRootsAction {
     }
 }
 
-/*extension UpdateSubtreeRootsAction: Action {
+extension UpdateSubtreeRootsAction: Action {
  var removeBlocksCacheWhenFailed: Bool { false }
  
  func run(with context: ActionContext, didUpdate: @escaping (CompactBlockProcessor.Event) async -> Void) async throws -> ActionContext {
@@ -85,4 +85,4 @@ final class UpdateSubtreeRootsAction {
  
  func stop() async { }
  }
- */
+ 
