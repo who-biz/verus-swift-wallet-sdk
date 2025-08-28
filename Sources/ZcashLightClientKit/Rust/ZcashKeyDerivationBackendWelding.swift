@@ -64,7 +64,7 @@ protocol ZcashKeyDerivationBackendWelding {
     /// - Throws: `rustDeriveUnifiedSpendingKey` if rust layer returns error.
     func deriveUnifiedSpendingKey(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?, accountIndex: Int32) throws -> UnifiedSpendingKey
     
-    func deriveSaplingSpendingKey(seed: [UInt8], accountIndex: Int32) throws -> SaplingExtendedSpendingKey
+    func deriveSaplingSpendingKey(seed: [UInt8], accountIndex: Int32) throws -> SaplingSpendingKey
     
     /// Derives a `UnifiedFullViewingKey` from a `UnifiedSpendingKey`
     /// - Parameter spendingKey: the `UnifiedSpendingKey` to derive from

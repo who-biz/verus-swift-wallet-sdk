@@ -172,7 +172,7 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
     func deriveSaplingSpendingKey(
         seed: [UInt8],
         accountIndex: Int32
-    ) throws -> SaplingExtendedSpendingKey {
+    ) throws -> SaplingSpendingKey {
 
         let binaryKeyPtr = seed.withUnsafeBufferPointer { seedBufferPtr in
             zcashlc_derive_shielded_spending_key(
@@ -292,4 +292,3 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
         }
     }
 }
-
