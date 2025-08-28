@@ -7,7 +7,7 @@
 //
 // swiftlint:disable type_body_length
 import Foundation
-import libzcashlc
+
 
 struct ZcashRustBackend: ZcashRustBackendWelding {
     
@@ -908,7 +908,7 @@ extension FFIBinaryKey {
         )
     }
     
-    func unsafeToSaplingSpendingKey(network: NetworkType) -> SaplingExtendedSpendingKey {
+    func unsafeToSaplingSpendingKey(network: NetworkType) -> SaplingSpendingKey {
         .init(
             network: network,
             bytes: self.encoding.toByteArray(
@@ -989,3 +989,4 @@ struct FfiTxId {
         }
     }
 }
+

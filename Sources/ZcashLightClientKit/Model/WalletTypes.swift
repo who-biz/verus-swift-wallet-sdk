@@ -16,29 +16,31 @@ public struct UnifiedSpendingKey: Equatable, Undescribable {
     public let account: UInt32
 }
 
-/// Sapling Extended Spending Key
-public struct SaplingExtendedSpendingKey: Equatable,/* StringEncoded,*/ Undescribable {
-    
+public struct SaplingSpendingKey: Equatable, Undescribable {
     let network: NetworkType
     let bytes: [UInt8]
     public let account: UInt32
-    //let encoding: String
+}
 
-    /*public var stringEncoded: String {
+/// Sapling Extended Spending Key
+public struct SaplingExtendedSpendingKey: Equatable,/* StringEncoded,*/ Undescribable {
+    let encoding: String
+
+    public var stringEncoded: String {
         encoding
-    }*/
+    }
 
     /// Initializes a new Sapling Extended Full Viewing Key from the provided string encoding
     /// - Parameters:
     ///  - parameter encoding: String encoding of ExtSK
     ///  - parameter network: `NetworkType` corresponding to the encoding (Mainnet or Testnet)
     /// - Throws: `spendingKeyInvalidInput`when the provided encoding is found to be invalid
-    /*public init(encoding: String, network: NetworkType) throws {
+    public init(encoding: String, network: NetworkType) throws {
         guard DerivationTool(networkType: network).isValidSaplingExtendedSpendingKey(encoding) else {
             throw ZcashError.spendingKeyInvalidInput
         }
         self.encoding = encoding
-    }*/
+    }
 }
 
 /// A Transparent Account Private Key
@@ -267,3 +269,4 @@ public enum Recipient: Equatable, StringEncoded {
         }
     }
 }
+
