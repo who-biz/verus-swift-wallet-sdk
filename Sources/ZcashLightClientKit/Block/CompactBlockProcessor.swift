@@ -222,8 +222,8 @@ actor CompactBlockProcessor {
                 action = ClearAlreadyScannedBlocksAction(container: container)
             case .enhance:
                 action = EnhanceAction(container: container, configProvider: configProvider)
-            case .fetchUTXO:
-                action = FetchUTXOsAction(container: container)
+            //case .fetchUTXO:
+            //    action = FetchUTXOsAction(container: container)
             case .handleSaplingParams:
                 action = SaplingParamsAction(container: container)
             case .clearCache:
@@ -441,9 +441,9 @@ extension CompactBlockProcessor {
         (actions[.enhance] as? EnhanceAction)?.blockEnhancer = updatedEnhancer
 
         // UTXOFetcher
-        let updatedUTXOFetcher = container.resolve(UTXOFetcher.self)
+        /*let updatedUTXOFetcher = container.resolve(UTXOFetcher.self)
 
-        (actions[.fetchUTXO] as? FetchUTXOsAction)?.utxoFetcher = updatedUTXOFetcher
+        (actions[.fetchUTXO] as? FetchUTXOsAction)?.utxoFetcher = updatedUTXOFetcher*/
     }
 }
 
@@ -574,8 +574,8 @@ extension CompactBlockProcessor {
                 case ZcashError.serviceGetInfoFailed, ZcashError.serviceLatestBlockFailed,
                     ZcashError.serviceLatestBlockHeightFailed, ZcashError.serviceBlockRangeFailed,
                     ZcashError.serviceSubmitFailed, ZcashError.serviceFetchTransactionFailed,
-                    ZcashError.serviceFetchUTXOsFailed, ZcashError.serviceBlockStreamFailed,
-                    ZcashError.serviceSubtreeRootsStreamFailed: serviceError = true
+                    /*ZcashError.serviceFetchUTXOsFailed,*/ ZcashError.serviceBlockStreamFailed/*,
+                    ZcashError.serviceSubtreeRootsStreamFailed*/: serviceError = true
                 default: serviceError = false
                 }
 
@@ -655,8 +655,9 @@ extension CompactBlockProcessor {
             break
         case .enhance:
             await send(event: .startedEnhancing)
-        case .fetchUTXO:
-            await send(event: .startedFetching)
+        //case .fetchUTXO:
+        //    break
+                /*await send(event: .startedFetching)*/
         case .handleSaplingParams:
             break
         case .clearCache:

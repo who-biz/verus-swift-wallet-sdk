@@ -156,7 +156,7 @@ enum Dependencies {
             )
         }
         
-        /*container.register(type: UTXOFetcher.self, isSingleton: true) { di in
+        container.register(type: UTXOFetcher.self, isSingleton: true) { di in
             let blockDownloaderService = di.resolve(BlockDownloaderService.self)
             let utxoFetcherConfig = UTXOFetcherConfig(walletBirthdayProvider: config.walletBirthdayProvider)
             let rustBackend = di.resolve(ZcashRustBackendWelding.self)
@@ -170,7 +170,7 @@ enum Dependencies {
                 metrics: metrics,
                 logger: logger
             )
-        }*/
+        }
         
         container.register(type: SaplingParametersHandler.self, isSingleton: true) { di in
             let rustBackend = di.resolve(ZcashRustBackendWelding.self)

@@ -502,12 +502,12 @@ public class SDKSynchronizer: Synchronizer {
     public func latestHeight() async throws -> BlockHeight {
         try await blockProcessor.latestHeight()
     }
-/*
+
     public func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) async throws -> RefreshedUTXOs {
         try throwIfUnprepared()
         return try await blockProcessor.refreshUTXOs(tAddress: address, startHeight: height)
     }
-*/
+
     public func getAccountBalance(accountIndex: Int = 0) async throws -> AccountBalance? {
         try await initializer.rustBackend.getWalletSummary()?.accountBalances[UInt32(accountIndex)]
     }
