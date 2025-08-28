@@ -27,7 +27,7 @@ extension NetworkType {
     static func forChainName(_ chainame: String) -> NetworkType? {
         switch chainame {
         case "test":    return .testnet
-        case "main":    return .mainnet
+        case "VRSC":    return .mainnet
         default:        return nil
         }
     }
@@ -45,7 +45,7 @@ extension NetworkType {
     public var chainName: String {
         switch self {
         case .mainnet:
-            return "main"
+            return "VRSC"
         case .testnet:
             return "test"
         }
