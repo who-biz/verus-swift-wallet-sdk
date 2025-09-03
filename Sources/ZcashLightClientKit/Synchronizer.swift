@@ -307,6 +307,8 @@ public protocol Synchronizer: AnyObject {
 
     /// Returns the last scanned/downloaded height
     func lastScannedHeight() async throws -> BlockHeight
+  
+    func linearScanProgress() async throws -> Float
 
     /// Returns the latests UTXOs for the given address from the specified height on
     ///
@@ -579,3 +581,4 @@ extension UUID {
         UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
     }
 }
+

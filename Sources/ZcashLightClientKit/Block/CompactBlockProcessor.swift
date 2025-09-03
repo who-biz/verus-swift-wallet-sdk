@@ -248,46 +248,66 @@ actor CompactBlockProcessor {
 // MARK: - "Public" API
 
 extension CompactBlockProcessor {
-    func start(retry: Bool = false) async {
-        if retry {
-            self.retryAttempts = 0
-            self.serviceFailureRetryAttempts = 0
-            self.backoffTimer?.invalidate()
-            self.backoffTimer = nil
-        }
-
-        guard await canStartSync() else {
-            if await isIdle() {
-                logger.warn("max retry attempts reached on \(await context.state) state")
-                await send(event: .failed(ZcashError.compactBlockProcessorMaxAttemptsReached(config.retries)))
-            } else {
-                logger.debug("Warning: compact block processor was started while busy!!!!")
-                afterSyncHooksManager.insert(hook: .anotherSync)
-            }
-            return
-        }
-
-        syncTask = Task(priority: .userInitiated) {
-            await run()
-        }
+  func start(retry: Bool = false) async {
+    if retry {
+      self.retryAttempts = 0
+      self.serviceFailureRetryAttempts = 0
+      self.backoffTimer?.invalidate()
+      self.backoffTimer = nil
     }
-
-    func stop() async {
-        syncTask?.cancel()
-        self.backoffTimer?.invalidate()
-        self.backoffTimer = nil
-        await stopAllActions()
-        retryAttempts = 0
-        serviceFailureRetryAttempts = 0
+    
+    guard await canStartSync() else {
+      if await isIdle() {
+        logger.warn("max retry attempts reached on \(await context.state) state")
+        await send(event: .failed(ZcashError.compactBlockProcessorMaxAttemptsReached(config.retries)))
+      } else {
+        logger.debug("Warning: compact block processor was started while busy!!!!")
+        afterSyncHooksManager.insert(hook: .anotherSync)
+      }
+      return
     }
-
-    func latestHeight() async throws -> BlockHeight {
-        try await blockDownloaderService.latestBlockHeight()
+    
+    syncTask = Task(priority: .userInitiated) {
+      await run()
     }
-
-    func lastScannedHeight() async throws -> BlockHeight {
-        await latestBlocksDataProvider.fullyScannedHeight
+  }
+  
+  func stop() async {
+    syncTask?.cancel()
+    self.backoffTimer?.invalidate()
+    self.backoffTimer = nil
+    await stopAllActions()
+    retryAttempts = 0
+    serviceFailureRetryAttempts = 0
+  }
+  
+  
+  
+  func latestHeight() async throws -> BlockHeight {
+    try await blockDownloaderService.latestBlockHeight()
+  }
+  
+  func lastScannedHeight() async throws -> BlockHeight {
+    await latestBlocksDataProvider.fullyScannedHeight
+  }
+  
+  func linearScanProgress() async throws -> Float {
+    let denominator = try await UInt64(latestHeight())
+    let numerator = try await UInt64(lastScannedHeight())
+    guard denominator != 0 else {
+      // this shouldn't happen but if it does, we need to get notified by clients and work on a fix
+      return Float(0.0)
     }
+    
+    let value = Float(numerator) / Float(denominator)
+    
+    // this shouldn't happen but if it does, we need to get notified by clients and work on a fix
+    if value > 1.0 {
+      throw ZcashError.rustScanProgressOutOfRange("\(value)")
+    }
+    
+    return value
+  }
 }
 
 // MARK: - Rewind
@@ -898,3 +918,4 @@ extension CompactBlockProcessor {
         }
     }
 }
+
