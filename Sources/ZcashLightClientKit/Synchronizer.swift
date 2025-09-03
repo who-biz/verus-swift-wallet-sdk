@@ -42,6 +42,8 @@ public struct SynchronizerState: Equatable {
     public var syncStatus: SyncStatus
     /// height of the latest block on the blockchain known to this synchronizer.
     public var latestBlockHeight: BlockHeight
+    /// height of the last downloaded & scanned block.
+    public var lastScannedHeight: BlockHeight
 
     /// Represents a synchronizer that has made zero progress hasn't done a sync attempt
     public static var zero: SynchronizerState {
@@ -49,7 +51,8 @@ public struct SynchronizerState: Equatable {
             syncSessionID: .nullID,
             accountBalance: .zero,
             internalSyncStatus: .unprepared,
-            latestBlockHeight: .zero
+            latestBlockHeight: .zero,
+            lastScannedHeight: .zero,
         )
     }
     
@@ -58,11 +61,13 @@ public struct SynchronizerState: Equatable {
         accountBalance: AccountBalance?,
         internalSyncStatus: InternalSyncStatus,
         latestBlockHeight: BlockHeight
+        lastScannedHeight: BlockHeight
     ) {
         self.syncSessionID = syncSessionID
         self.accountBalance = accountBalance
         self.internalSyncStatus = internalSyncStatus
         self.latestBlockHeight = latestBlockHeight
+        self.lastScannedHeight = lastScannedHeight
         self.syncStatus = internalSyncStatus.mapToSyncStatus()
     }
 }

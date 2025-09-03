@@ -284,6 +284,10 @@ extension CompactBlockProcessor {
     func latestHeight() async throws -> BlockHeight {
         try await blockDownloaderService.latestBlockHeight()
     }
+
+    func lastScannedHeight() async throws -> BlockHeight {
+        try await blockDownloaderService.lastDownloadedBlockHeight()
+    }
 }
 
 // MARK: - Rewind

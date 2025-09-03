@@ -186,6 +186,12 @@ extension CombineSDKSynchronizer: CombineSynchronizer {
         }
     }
 
+    public func lastScannedHeight() -> SinglePublisher<BlockHeight, Error> {
+        AsyncToCombineGateway.executeThrowingAction() {
+            try await self.synchronizer.lastScannedHeight()
+        }
+    }
+
 /*    public func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) -> SinglePublisher<RefreshedUTXOs, Error> {
         AsyncToCombineGateway.executeThrowingAction() {
             try await self.synchronizer.refreshUTXOs(address: address, from: height)

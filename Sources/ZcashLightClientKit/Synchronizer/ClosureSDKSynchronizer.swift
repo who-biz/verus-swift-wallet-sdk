@@ -183,6 +183,12 @@ extension ClosureSDKSynchronizer: ClosureSynchronizer {
             try await self.synchronizer.latestHeight()
         }
     }
+
+    public func lastScannedHeight(completion: @escaping (Result<BlockHeight, Error>) -> Void) {
+        AsyncToClosureGateway.executeThrowingAction(completion) {
+            try await self.synchronizer.lastScannedHeight()
+        }
+    }
 /*
     public func refreshUTXOs(address: TransparentAddress, from height: BlockHeight, completion: @escaping (Result<RefreshedUTXOs, Error>) -> Void) {
         AsyncToClosureGateway.executeThrowingAction(completion) {

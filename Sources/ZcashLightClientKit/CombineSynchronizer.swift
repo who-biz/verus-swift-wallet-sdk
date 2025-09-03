@@ -129,6 +129,8 @@ public protocol CombineSynchronizer {
 
     func latestHeight() -> SinglePublisher<BlockHeight, Error>
 
+    func lastScannedHeight() -> SinglePublisher<BlockHeight, Error>
+
     //func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) -> SinglePublisher<RefreshedUTXOs, Error>
 
     func getAccountBalance(accountIndex: Int) -> SinglePublisher<AccountBalance?, Error>
