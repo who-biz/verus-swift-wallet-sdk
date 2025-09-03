@@ -60,7 +60,7 @@ public struct SynchronizerState: Equatable {
         syncSessionID: UUID,
         accountBalance: AccountBalance?,
         internalSyncStatus: InternalSyncStatus,
-        latestBlockHeight: BlockHeight
+        latestBlockHeight: BlockHeight,
         lastScannedHeight: BlockHeight
     ) {
         self.syncSessionID = syncSessionID
@@ -304,6 +304,9 @@ public protocol Synchronizer: AnyObject {
 
     /// Returns the latest block height from the provided Lightwallet endpoint
     func latestHeight() async throws -> BlockHeight
+
+    /// Returns the last scanned/downloaded height
+    func lastScannedHeight() async throws -> BlockHeight
 
     /// Returns the latests UTXOs for the given address from the specified height on
     ///

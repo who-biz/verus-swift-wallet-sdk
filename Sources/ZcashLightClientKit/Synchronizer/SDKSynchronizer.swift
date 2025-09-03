@@ -709,7 +709,8 @@ public class SDKSynchronizer: Synchronizer {
             syncSessionID: syncSession.value,
             accountBalance: try? await getAccountBalance(),
             internalSyncStatus: status,
-            latestBlockHeight: latestBlocksDataProvider.latestBlockHeight
+            latestBlockHeight: latestBlocksDataProvider.latestBlockHeight,
+            lastScannedHeight: latestBlocksDataProvider.fullyScannedHeight
         )
     }
 
