@@ -506,10 +506,6 @@ public class SDKSynchronizer: Synchronizer {
     public func lastScannedHeight() async throws -> BlockHeight {
         try await blockProcessor.lastScannedHeight()
     }
-  
-    public func linearScanProgress() async throws -> Float {
-      try await blockProcessor.linearScanProgress()
-    }
 
     public func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) async throws -> RefreshedUTXOs {
         try throwIfUnprepared()

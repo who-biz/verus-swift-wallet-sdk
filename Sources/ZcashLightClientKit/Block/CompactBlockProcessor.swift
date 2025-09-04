@@ -291,23 +291,6 @@ extension CompactBlockProcessor {
     await latestBlocksDataProvider.fullyScannedHeight
   }
   
-  func linearScanProgress() async throws -> Float {
-    let denominator = try await UInt64(latestHeight())
-    let numerator = try await UInt64(lastScannedHeight())
-    guard denominator != 0 else {
-      // this shouldn't happen but if it does, we need to get notified by clients and work on a fix
-      return Float(0.0)
-    }
-    
-    let value = Float(numerator) / Float(denominator)
-    
-    // this shouldn't happen but if it does, we need to get notified by clients and work on a fix
-    if value > 1.0 {
-      throw ZcashError.rustScanProgressOutOfRange("\(value)")
-    }
-    
-    return value
-  }
 }
 
 // MARK: - Rewind
