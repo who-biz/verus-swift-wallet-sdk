@@ -310,24 +310,7 @@ public protocol Synchronizer: AnyObject {
   
     /// Returns the linear Scanning progress between network block height (lightwalletd endpoint, not storage)
     /// and last scanned height, as a percentage. Floor handling is required elsewhere for less precision
-    func linearScanProgress() async throws -> Float {
-        let denominator = try await UInt64(latestHeight())
-        let numerator = try await UInt64(lastScannedHeight())
-        guard denominator != 0 else {
-          // this is expected to happen before lightwalletd is fully connected and sync has begun
-          // return zero scanning progress for that period
-          return Float(0.0)
-        }
-    
-        let value = Float(numerator) / Float(denominator)
-
-        if value > 1.0 {
-          // this shouldn't happen with our calculations, but has happened for ZEC with SbS scanning algo
-          throw ZcashError.rustScanProgressOutOfRange("\(value)")
-        }
-   
-       return value 
-    }
+    func linearScanProgress(networkHeight: BlockHeight) async throws -> Float
 
     /// Returns the latests UTXOs for the given address from the specified height on
     ///

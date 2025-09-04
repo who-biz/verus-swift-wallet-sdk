@@ -507,6 +507,23 @@ public class SDKSynchronizer: Synchronizer {
         try await blockProcessor.lastScannedHeight()
     }
 
+    public func linearScanProgressForNetworkHeight(networkHeight: BlockHeight ) async throws -> Float {
+        let denominator = try await UInt64(networkHeight)
+        let numerator = try await UInt64(lastScannedHeight())
+        guard denominator != 0 else {
+          // this is expected to happen before lightwalletd is fully connected and sync has begun
+          // return zero scanning progress for that period
+          return Float(0.0)
+        }
+
+        let value = Float(numerator) / Float(denominator)    
+        if value > 1.0 {
+          // this shouldn't happen with our calculations, but has happened for ZEC with SbS scanning algo
+          throw ZcashError.rustScanProgressOutOfRange("\(value)")
+        }
+       return value
+    }
+
     public func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) async throws -> RefreshedUTXOs {
         try throwIfUnprepared()
         return try await blockProcessor.refreshUTXOs(tAddress: address, startHeight: height)
