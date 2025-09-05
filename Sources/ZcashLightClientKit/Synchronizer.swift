@@ -310,7 +310,7 @@ public protocol Synchronizer: AnyObject {
   
     /// Returns the linear Scanning progress between network block height (lightwalletd endpoint, not storage)
     /// and last scanned height, as a percentage. Floor handling is required elsewhere for less precision
-    func linearScanProgress(networkHeight: BlockHeight) async throws -> Float
+    func linearScanProgressForNetworkHeight(networkHeight: BlockHeight) async throws -> Float
 
     /// Returns the latests UTXOs for the given address from the specified height on
     ///
