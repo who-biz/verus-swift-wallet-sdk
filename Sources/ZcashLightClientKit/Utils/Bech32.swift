@@ -3,18 +3,19 @@
 
 import Foundation
 
-enum Bech32DecodingError: Error {
+public enum Bech32DecodingError: Error {
   case invalidCharacter(Character)
   case mixedCase
   case noSeparator
   case invalidSeparatorPosition
   case hrpTooShort
   case dataTooShort
+  case wrongVariantBech32m
   case checksumMismatch
   case invalidPadding
 }
 
-struct Bech32 {
+public struct Bech32 {
   private static let charset = Array("qpzry9x8gf2tvdw0s3jn54khce6mua7l")
   private static let gen: [UInt32] = [
     0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3
