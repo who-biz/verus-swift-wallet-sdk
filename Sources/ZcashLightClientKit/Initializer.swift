@@ -74,7 +74,7 @@ extension ZcashSynchronizerAlias: CustomStringConvertible {
         case .`default`:
             return "default"
         case let .custom(alias):
-            return "c_\(alias)"
+            return "VRSC"
         }
     }
 }
@@ -305,7 +305,7 @@ public class Initializer {
         
         // It's not possible to fail from constructor. Technically it's possible but it can be pain for the client apps to handle errors thrown
         // from constructor. So `parsingError` is just stored in initializer and `SDKSynchronizer.prepare()` throw this error if it exists.
-        let (updatedURLs, parsingError) = Self.tryToUpdateURLs(with: alias, urls: urls)
+        let (updatedURLs, parsingError) = Self.tryToUpdateURLs(alias: alias, urls: urls)
         
         Dependencies.setup(
             in: container,
@@ -329,10 +329,10 @@ public class Initializer {
     ///
     /// If any of the URLs can't be parsed then returned error isn't nil.
     static func tryToUpdateURLs(
-        with alias: ZcashSynchronizerAlias,
+        alias: ZcashSynchronizerAlias,
         urls: URLs
     ) -> (URLs, ZcashError?) {
-        let updatedURLsResult = Self.updateURLs(with: alias, urls: urls)
+        let updatedURLsResult = Self.updateURLs(alias: alias, urls: urls)
 
         let parsingError: ZcashError?
         let updatedURLs: URLs
@@ -351,7 +351,7 @@ public class Initializer {
     }
 
     private static func updateURLs(
-        with alias: ZcashSynchronizerAlias,
+        alias: ZcashSynchronizerAlias,
         urls: URLs
     ) -> Result<URLs, ZcashError> {
         guard let updatedFsBlockDbRoot = urls.fsBlockDbRoot.updateLastPathComponent(with: alias) else {
