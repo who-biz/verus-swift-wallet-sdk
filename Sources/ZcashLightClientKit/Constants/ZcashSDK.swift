@@ -186,13 +186,13 @@ public enum ZcashSDKMainnetConstants: NetworkConstants {
     /// Default Name for Compact Block caches db
     public static let defaultCacheDbName = "caches.db"
     
-    public static let defaultDbNamePrefix = "ZcashSdk_mainnet_"
+    public static let defaultDbNamePrefix = "vrsc_"
 }
 
 public enum ZcashSDKTestnetConstants: NetworkConstants {
     /// The height of the first sapling block. When it comes to shielded transactions, we do not need to consider any blocks
     /// prior to this height, at all.
-    public static let saplingActivationHeight: BlockHeight = 280_000
+    public static let saplingActivationHeight: BlockHeight = 1
 
     /// Default Name for LibRustZcash data.db
     public static let defaultDataDbName = "data.db"
@@ -202,5 +202,5 @@ public enum ZcashSDKTestnetConstants: NetworkConstants {
 
     public static let defaultFsBlockDbRootName = "fs_cache"
     
-    public static let defaultDbNamePrefix = "ZcashSdk_testnet_"
+    public static let defaultDbNamePrefix = "vrsctest_"
 }
