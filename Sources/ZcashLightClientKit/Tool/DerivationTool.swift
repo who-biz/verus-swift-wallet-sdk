@@ -24,8 +24,12 @@ public protocol KeyDeriving {
     ///     - `derivationToolSpendingKeyInvalidAccount` if the `accountIndex` is invalid.
     ///     - some `ZcashError.rust*` error if the derivation fails.
     /// - Returns a `UnifiedSpendingKey`
-    func deriveUnifiedSpendingKey(seed: [UInt8], accountIndex: Int) throws -> UnifiedSpendingKey
+    func deriveUnifiedSpendingKey(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?, accountIndex: Int) throws -> UnifiedSpendingKey
+    
+    func deriveSaplingSpendingKey(seed: [UInt8], accountIndex: Int) throws -> SaplingSpendingKey
 
+    func deriveShieldedAddress(from ufvk: String) throws -> String
+    
     /// Given a spending key, return the associated viewing key.
     /// - Parameter spendingKey: the `UnifiedSpendingKey` from which to derive the `UnifiedFullViewingKey` from.
     /// - Throws: some `ZcashError.rust*` error if the derivation fails.
@@ -51,6 +55,8 @@ public protocol KeyDeriving {
 }
 
 public class DerivationTool: KeyDeriving {
+    
+    
     let backend: ZcashKeyDerivationBackendWelding
     
     public init(networkType: NetworkType) {
@@ -68,6 +74,10 @@ public class DerivationTool: KeyDeriving {
     public static func getAddressMetadata(_ addr: String) -> AddressMetadata? {
         ZcashKeyDerivationBackend.getAddressMetadata(addr)
     }
+    
+    public func deriveShieldedAddress(from ufvk: String) throws -> String {
+        try backend.deriveShieldedAddress(ufvk)
+    }
 
     /// Given a spending key, return the associated viewing key.
     /// - Parameter spendingKey: the `UnifiedSpendingKey` from which to derive the `UnifiedFullViewingKey` from.
@@ -81,11 +91,16 @@ public class DerivationTool: KeyDeriving {
     /// - Parameter numberOfAccounts: the number of accounts to use. Multiple accounts are not fully
     /// supported so the default value of 1 is recommended.
     /// - Returns: the spending keys that correspond to the seed, formatted as Strings.
-    public func deriveUnifiedSpendingKey(seed: [UInt8], accountIndex: Int) throws -> UnifiedSpendingKey {
+    public func deriveUnifiedSpendingKey(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?, accountIndex: Int) throws -> UnifiedSpendingKey {
         guard accountIndex >= 0, let accountIndex = Int32(exactly: accountIndex) else { throw ZcashError.derivationToolSpendingKeyInvalidAccount }
-        return try backend.deriveUnifiedSpendingKey(from: seed, accountIndex: accountIndex)
+        return try backend.deriveUnifiedSpendingKey(transparent_key: transparent_key, extsk: extsk, seed: seed, accountIndex: accountIndex)
     }
-
+    
+    public func deriveSaplingSpendingKey(seed: [UInt8], accountIndex: Int) throws -> SaplingSpendingKey {
+        guard accountIndex >= 0, let accountIndex = Int32(exactly: accountIndex) else { throw ZcashError.derivationToolSpendingKeyInvalidAccount }
+        return try backend.deriveSaplingSpendingKey(seed: seed, accountIndex: accountIndex)
+    }
+    
     public func receiverTypecodesFromUnifiedAddress(_ address: UnifiedAddress) throws -> [UnifiedAddress.ReceiverTypecodes] {
         return try backend.receiverTypecodesOnUnifiedAddress(address.stringEncoded)
             .map { UnifiedAddress.ReceiverTypecodes(typecode: $0) }
@@ -192,6 +207,12 @@ public extension UnifiedSpendingKey {
     }
 }
 
+public extension SaplingSpendingKey {
+    func map<T>(_ transform: (SaplingSpendingKey) throws -> T) rethrows -> T {
+        try transform(self)
+    }
+}
+
 public extension UnifiedAddress {
     /// Extracts the sapling receiver from this UA if available
     /// - Returns: an `Optional<SaplingAddress>`
@@ -205,3 +226,4 @@ public extension UnifiedAddress {
         try DerivationTool(networkType: networkType).transparentReceiver(from: self)
     }
 }
+

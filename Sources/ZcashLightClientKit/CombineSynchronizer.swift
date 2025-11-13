@@ -23,7 +23,9 @@ public protocol CombineSynchronizer {
     var eventStream: AnyPublisher<SynchronizerEvent, Never> { get }
 
     func prepare(
-        with seed: [UInt8]?,
+        transparent_key: [UInt8]?,
+        extsk: [UInt8]?,
+        seed: [UInt8]?,
         walletBirthday: BlockHeight,
         for walletMode: WalletInitMode
     ) -> SinglePublisher<Initializer.InitializationResult, Error>
@@ -66,13 +68,13 @@ public protocol CombineSynchronizer {
     ///
     /// If `prepare()` hasn't already been called since creation of the synchronizer instance or since the last wipe then this method throws
     /// `SynchronizerErrors.notPrepared`.
-    func proposeShielding(
+   /* func proposeShielding(
         accountIndex: Int,
         shieldingThreshold: Zatoshi,
         memo: Memo,
         transparentReceiver: TransparentAddress?
     ) -> SinglePublisher<Proposal?, Error>
-
+*/
     /// Creates the transactions in the given proposal.
     ///
     /// - Parameter proposal: the proposal for which to create transactions.
@@ -102,12 +104,12 @@ public protocol CombineSynchronizer {
         deprecated,
         message: "Upcoming SDK 2.1 will create multiple transactions at once for some recipients. use `proposeShielding:` instead"
     )
-    func shieldFunds(
+    /*func shieldFunds(
         spendingKey: UnifiedSpendingKey,
         memo: Memo,
         shieldingThreshold: Zatoshi
     ) -> SinglePublisher<ZcashTransaction.Overview, Error>
-
+    */
     func proposefulfillingPaymentURI(
         _ uri: String,
         accountIndex: Int
@@ -127,7 +129,9 @@ public protocol CombineSynchronizer {
 
     func latestHeight() -> SinglePublisher<BlockHeight, Error>
 
-    func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) -> SinglePublisher<RefreshedUTXOs, Error>
+    func lastScannedHeight() -> SinglePublisher<BlockHeight, Error>
+
+    //func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) -> SinglePublisher<RefreshedUTXOs, Error>
 
     func getAccountBalance(accountIndex: Int) -> SinglePublisher<AccountBalance?, Error>
 

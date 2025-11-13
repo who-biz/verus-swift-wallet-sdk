@@ -1,6 +1,6 @@
 //
 //  ZcashKeyDerivationBackendWelding.swift
-//  
+//
 //
 //  Created by Michal Fousek on 11.04.2023.
 //
@@ -54,14 +54,18 @@ protocol ZcashKeyDerivationBackendWelding {
     /// - Parameter ufvk: UTF-8 encoded String to validate
     /// - Returns: true when the encoded string is a valid UFVK. false in any other case
     func isValidUnifiedFullViewingKey(_ ufvk: String) -> Bool
+    
+    func deriveShieldedAddress(_ ufvk: String) throws -> String
 
     /// Derives and returns a unified spending key from the given seed for the given account ID.
     /// Returns the binary encoding of the spending key. The caller should manage the memory of (and store, if necessary) the returned spending key in a secure fashion.
     /// - Parameter seed: a Byte Array with the seed
     /// - Parameter accountIndex:account index that the key can spend from
     /// - Throws: `rustDeriveUnifiedSpendingKey` if rust layer returns error.
-    func deriveUnifiedSpendingKey(from seed: [UInt8], accountIndex: Int32) throws -> UnifiedSpendingKey
-
+    func deriveUnifiedSpendingKey(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?, accountIndex: Int32) throws -> UnifiedSpendingKey
+    
+    func deriveSaplingSpendingKey(seed: [UInt8], accountIndex: Int32) throws -> SaplingSpendingKey
+    
     /// Derives a `UnifiedFullViewingKey` from a `UnifiedSpendingKey`
     /// - Parameter spendingKey: the `UnifiedSpendingKey` to derive from
     /// - Returns: the derived `UnifiedFullViewingKey`
@@ -86,3 +90,4 @@ protocol ZcashKeyDerivationBackendWelding {
     ///     - `rustGetTransparentReceiverInvalidReceiver` if generated transparent receiver is invalid.
     func getTransparentReceiver(for uAddr: UnifiedAddress) throws -> TransparentAddress
 }
+

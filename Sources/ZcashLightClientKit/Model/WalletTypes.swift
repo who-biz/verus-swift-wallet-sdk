@@ -16,8 +16,14 @@ public struct UnifiedSpendingKey: Equatable, Undescribable {
     public let account: UInt32
 }
 
+public struct SaplingSpendingKey: Equatable, Undescribable {
+    let network: NetworkType
+    let bytes: [UInt8]
+    public let account: UInt32
+}
+
 /// Sapling Extended Spending Key
-public struct SaplingExtendedSpendingKey: Equatable, StringEncoded, Undescribable {
+public struct SaplingExtendedSpendingKey: Equatable,/* StringEncoded,*/ Undescribable {
     let encoding: String
 
     public var stringEncoded: String {
@@ -263,3 +269,4 @@ public enum Recipient: Equatable, StringEncoded {
         }
     }
 }
+

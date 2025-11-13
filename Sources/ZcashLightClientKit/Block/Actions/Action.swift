@@ -70,7 +70,7 @@ enum CBPState: CaseIterable {
     case scan
     case clearAlreadyScannedBlocks
     case enhance
-    case fetchUTXO
+    //case fetchUTXO
     case handleSaplingParams
     case clearCache
     case finished

@@ -44,12 +44,12 @@ protocol ZcashRustBackendWelding {
     /// - parameter recoverUntil: the fully-scanned height up to which the account will be treated as "being recovered"
     /// - Returns: The `UnifiedSpendingKey` structs for the number of accounts created
     /// - Throws: `rustCreateAccount`.
-    func createAccount(seed: [UInt8], treeState: TreeState, recoverUntil: UInt32?) async throws -> UnifiedSpendingKey
+    func createAccount(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8], treeState: TreeState, recoverUntil: UInt32?) async throws -> UnifiedSpendingKey
 
     /// Checks whether the given seed is relevant to any of the derived accounts in the wallet.
     ///
     /// - parameter seed: byte array of the seed
-    func isSeedRelevantToAnyDerivedAccount(seed: [UInt8]) async throws -> Bool
+    func isSeedRelevantToAnyDerivedAccount(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8]) async throws -> Bool
 
     /// Scans a transaction for any information that can be decrypted by the accounts in the wallet, and saves it to the wallet.
     /// - parameter tx:     the transaction to decrypt
@@ -93,7 +93,7 @@ protocol ZcashRustBackendWelding {
     /// - parameter account; the account index to query
     /// - Throws:
     ///     - `rustGetTransparentBalanceNegativeAccount` if `account` is < 0.
-    ///     - `rustGetTransparentBalance` if rust layer returns error.
+    ///     - `rustGetTransparentBalance` if rust layer returns error
     func getTransparentBalance(account: Int32) async throws -> Int64
 
     /// Initializes the data db. This will performs any migrations needed on the sqlite file
@@ -103,7 +103,7 @@ protocol ZcashRustBackendWelding {
     /// or `DbInitResult.seedRequired` if the operation requires the seed to be passed
     /// in order to be completed successfully.
     /// Throws `rustInitDataDb` if rust layer returns error.
-    func initDataDb(seed: [UInt8]?) async throws -> DbInitResult
+    func initDataDb(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?) async throws -> DbInitResult
 
     /// Returns a list of the transparent receivers for the diversified unified addresses that have
     /// been allocated for the provided account.
@@ -205,6 +205,7 @@ protocol ZcashRustBackendWelding {
         value: Int64,
         height: BlockHeight
     ) async throws
+ 
 
     /// Select transaction inputs, compute fees, and construct a proposal for a transaction
     /// that can then be authorized and made ready for submission to the network with
@@ -251,13 +252,13 @@ protocol ZcashRustBackendWelding {
     ///             will select whichever of the account's transparent receivers has funds
     ///             to shield.
     /// - Throws: `rustShieldFunds` if rust layer returns error.
-    func proposeShielding(
+/*    func proposeShielding(
         account: Int32,
         memo: MemoBytes?,
         shieldingThreshold: Zatoshi,
         transparentReceiver: String?
     ) async throws -> FfiProposal?
-
+*/
     /// Creates a transaction from the given proposal.
     /// - Parameter proposal: the transaction proposal.
     /// - Parameter usk: `UnifiedSpendingKey` for the account that controls the funds to be spent.

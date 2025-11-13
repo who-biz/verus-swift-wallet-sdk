@@ -8,12 +8,12 @@ import Foundation
 
 extension Checkpoint {
     static let mainnetMin = Checkpoint(
-        height: 419_200,
-        hash: "00000000025a57200d898ac7f21e26bf29028bbe96ec46e05b2c17cc9db9e4f3",
-        time: 1540779337,
+        height: 227_520,
+        hash: "0000000000003848c00178d5787cc9c8bbc30f87d65d511bbb0b7e567634d0a1",
+        time: 1540954856,
         saplingTree: "000000",
         orchardTree: nil
     )
 
-    static let mainnetCheckpointDirectory = Bundle.module.bundleURL.appendingPathComponent("checkpoints/mainnet/")
+    static let mainnetCheckpointDirectory = Bundle.main.url(forResource: "zcash-mainnet", withExtension: "bundle")!
 }

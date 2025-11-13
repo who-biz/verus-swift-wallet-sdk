@@ -7,9 +7,10 @@
 //
 // swiftlint:disable type_body_length
 import Foundation
-import libzcashlc
+
 
 struct ZcashRustBackend: ZcashRustBackendWelding {
+    
     let minimumConfirmations: UInt32 = 10
     let minimumShieldingConfirmations: UInt32 = 1
     let useZIP317Fees = true
@@ -73,7 +74,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
     }
 
     @DBActor
-    func createAccount(seed: [UInt8], treeState: TreeState, recoverUntil: UInt32?) async throws -> UnifiedSpendingKey {
+    func createAccount(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8], treeState: TreeState, recoverUntil: UInt32?) async throws -> UnifiedSpendingKey {
         var rUntil: Int64 = -1
         
         if let recoverUntil {
@@ -85,6 +86,10 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
         let ffiBinaryKeyPtr = zcashlc_create_account(
             dbData.0,
             dbData.1,
+            transparent_key,
+            UInt(transparent_key.count),
+            extsk,
+            UInt(extsk.count),
             seed,
             UInt(seed.count),
             treeStateBytes,
@@ -103,10 +108,14 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
     }
 
     @DBActor
-    func isSeedRelevantToAnyDerivedAccount(seed: [UInt8]) async throws -> Bool {
+    func isSeedRelevantToAnyDerivedAccount(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8]) async throws -> Bool {
         let result = zcashlc_is_seed_relevant_to_any_derived_account(
             dbData.0,
             dbData.1,
+            transparent_key,
+            UInt(transparent_key.count),
+            extsk,
+            UInt(extsk.count),
             seed,
             UInt(seed.count),
             networkType.networkId
@@ -323,8 +332,18 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
     }
 
     @DBActor
-    func initDataDb(seed: [UInt8]?) async throws -> DbInitResult {
-        let initResult = zcashlc_init_data_database(dbData.0, dbData.1, seed, UInt(seed?.count ?? 0), networkType.networkId)
+    func initDataDb(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?) async throws -> DbInitResult {
+        let initResult = zcashlc_init_data_database(
+            dbData.0,
+            dbData.1,
+            transparent_key,
+            UInt(transparent_key?.count ?? 0),
+            extsk,
+            UInt(extsk?.count ?? 0),
+            seed,
+            UInt(seed?.count ?? 0),
+            networkType.networkId
+        )
 
         switch initResult {
         case 0: // ok
@@ -607,6 +626,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             }
         }
     }
+ 
 
     @DBActor
     func updateChainTip(height: Int32) async throws {
@@ -734,7 +754,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             receivedSaplingNoteCount: summaryPtr.pointee.received_sapling_note_count
         )
     }
-
+/*
     @DBActor
     func proposeShielding(
         account: Int32,
@@ -769,7 +789,7 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             count: Int(proposal.pointee.len)
         ))
     }
-
+*/
     @DBActor
     func createProposedTransactions(
         proposal: FfiProposal,
@@ -887,6 +907,16 @@ extension FFIBinaryKey {
             account: self.account_id
         )
     }
+    
+    func unsafeToSaplingSpendingKey(network: NetworkType) -> SaplingSpendingKey {
+        .init(
+            network: network,
+            bytes: self.encoding.toByteArray(
+                length: Int(self.encoding_len)
+            ),
+            account: self.account_id
+        )
+    }
 }
 
 extension UnsafeMutablePointer where Pointee == UInt8 {
@@ -959,3 +989,4 @@ struct FfiTxId {
         }
     }
 }
+

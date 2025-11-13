@@ -27,7 +27,7 @@ extension NetworkType {
     static func forChainName(_ chainame: String) -> NetworkType? {
         switch chainame {
         case "test":    return .testnet
-        case "main":    return .mainnet
+        case "VRSC":    return .mainnet
         default:        return nil
         }
     }
@@ -45,7 +45,7 @@ extension NetworkType {
     public var chainName: String {
         switch self {
         case .mainnet:
-            return "main"
+            return "VRSC"
         case .testnet:
             return "test"
         }
@@ -133,7 +133,7 @@ public enum ZcashSDK {
     /// The Url that is used by default in zcashd.
     /// We'll want to make this externally configurable, rather than baking it into the SDK but
     /// this will do for now, since we're using a cloudfront URL that already redirects.
-    public static let cloudParameterURL = "https://z.cash/downloads/"
+    public static let cloudParameterURL = "https://verus.io/zcparams"
 
     /// File name for the sapling spend params
     public static let spendParamFilename = "sapling-spend.params"
@@ -176,7 +176,7 @@ public extension NetworkConstants {
 public enum ZcashSDKMainnetConstants: NetworkConstants {
     /// The height of the first sapling block. When it comes to shielded transactions, we do not need to consider any blocks
     /// prior to this height, at all.
-    public static let saplingActivationHeight: BlockHeight = 419_200
+    public static let saplingActivationHeight: BlockHeight = 227_520
 
     /// Default Name for LibRustZcash data.db
     public static let defaultDataDbName = "data.db"
@@ -186,13 +186,13 @@ public enum ZcashSDKMainnetConstants: NetworkConstants {
     /// Default Name for Compact Block caches db
     public static let defaultCacheDbName = "caches.db"
     
-    public static let defaultDbNamePrefix = "ZcashSdk_mainnet_"
+    public static let defaultDbNamePrefix = "vrsc_"
 }
 
 public enum ZcashSDKTestnetConstants: NetworkConstants {
     /// The height of the first sapling block. When it comes to shielded transactions, we do not need to consider any blocks
     /// prior to this height, at all.
-    public static let saplingActivationHeight: BlockHeight = 280_000
+    public static let saplingActivationHeight: BlockHeight = 1
 
     /// Default Name for LibRustZcash data.db
     public static let defaultDataDbName = "data.db"
@@ -202,5 +202,5 @@ public enum ZcashSDKTestnetConstants: NetworkConstants {
 
     public static let defaultFsBlockDbRootName = "fs_cache"
     
-    public static let defaultDbNamePrefix = "ZcashSdk_testnet_"
+    public static let defaultDbNamePrefix = "vrsctest_"
 }

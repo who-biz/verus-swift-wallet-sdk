@@ -74,7 +74,7 @@ extension ZcashSynchronizerAlias: CustomStringConvertible {
         case .`default`:
             return "default"
         case let .custom(alias):
-            return "c_\(alias)"
+            return "VRSC"
         }
     }
 }
@@ -305,7 +305,7 @@ public class Initializer {
         
         // It's not possible to fail from constructor. Technically it's possible but it can be pain for the client apps to handle errors thrown
         // from constructor. So `parsingError` is just stored in initializer and `SDKSynchronizer.prepare()` throw this error if it exists.
-        let (updatedURLs, parsingError) = Self.tryToUpdateURLs(with: alias, urls: urls)
+        let (updatedURLs, parsingError) = Self.tryToUpdateURLs(alias: alias, urls: urls)
         
         Dependencies.setup(
             in: container,
@@ -329,10 +329,10 @@ public class Initializer {
     ///
     /// If any of the URLs can't be parsed then returned error isn't nil.
     static func tryToUpdateURLs(
-        with alias: ZcashSynchronizerAlias,
+        alias: ZcashSynchronizerAlias,
         urls: URLs
     ) -> (URLs, ZcashError?) {
-        let updatedURLsResult = Self.updateURLs(with: alias, urls: urls)
+        let updatedURLsResult = Self.updateURLs(alias: alias, urls: urls)
 
         let parsingError: ZcashError?
         let updatedURLs: URLs
@@ -351,7 +351,7 @@ public class Initializer {
     }
 
     private static func updateURLs(
-        with alias: ZcashSynchronizerAlias,
+        alias: ZcashSynchronizerAlias,
         urls: URLs
     ) -> Result<URLs, ZcashError> {
         guard let updatedFsBlockDbRoot = urls.fsBlockDbRoot.updateLastPathComponent(with: alias) else {
@@ -398,10 +398,10 @@ public class Initializer {
     /// - Parameter seed: ZIP-32 Seed bytes for the wallet that will be initialized
     /// - Throws: `InitializerError.dataDbInitFailed` if the creation of the dataDb fails
     /// `InitializerError.accountInitFailed` if the account table can't be initialized. 
-    func initialize(with seed: [UInt8]?, walletBirthday: BlockHeight, for walletMode: WalletInitMode) async throws -> InitializationResult {
+    func initialize(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?, walletBirthday: BlockHeight, for walletMode: WalletInitMode) async throws -> InitializationResult {
         try await storage.create()
 
-        if case .seedRequired = try await rustBackend.initDataDb(seed: seed) {
+        if case .seedRequired = try await rustBackend.initDataDb(transparent_key: transparent_key, extsk: extsk, seed: seed) {
             return .seedRequired
         }
 
@@ -412,7 +412,7 @@ public class Initializer {
         self.walletBirthday = checkpoint.height
 
         // If there are no accounts it must be created, the default amount of accounts is 1
-        if let seed, try await rustBackend.listAccounts().isEmpty {
+        if try await rustBackend.listAccounts().isEmpty {
             var chainTip: UInt32?
             
             if walletMode == .restoreWallet, let latestBlockHeight = try? await lightWalletService.latestBlockHeight() {
@@ -420,7 +420,9 @@ public class Initializer {
             }
             
             _ = try await rustBackend.createAccount(
-                seed: seed,
+                transparent_key: transparent_key ?? [],
+                extsk: extsk ?? [],
+                seed: seed ?? [],
                 treeState: checkpoint.treeState(),
                 recoverUntil: chainTip
             )

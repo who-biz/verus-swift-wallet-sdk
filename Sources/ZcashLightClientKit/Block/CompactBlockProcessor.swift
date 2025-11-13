@@ -222,8 +222,8 @@ actor CompactBlockProcessor {
                 action = ClearAlreadyScannedBlocksAction(container: container)
             case .enhance:
                 action = EnhanceAction(container: container, configProvider: configProvider)
-            case .fetchUTXO:
-                action = FetchUTXOsAction(container: container)
+            //case .fetchUTXO:
+            //    action = FetchUTXOsAction(container: container)
             case .handleSaplingParams:
                 action = SaplingParamsAction(container: container)
             case .clearCache:
@@ -248,42 +248,49 @@ actor CompactBlockProcessor {
 // MARK: - "Public" API
 
 extension CompactBlockProcessor {
-    func start(retry: Bool = false) async {
-        if retry {
-            self.retryAttempts = 0
-            self.serviceFailureRetryAttempts = 0
-            self.backoffTimer?.invalidate()
-            self.backoffTimer = nil
-        }
-
-        guard await canStartSync() else {
-            if await isIdle() {
-                logger.warn("max retry attempts reached on \(await context.state) state")
-                await send(event: .failed(ZcashError.compactBlockProcessorMaxAttemptsReached(config.retries)))
-            } else {
-                logger.debug("Warning: compact block processor was started while busy!!!!")
-                afterSyncHooksManager.insert(hook: .anotherSync)
-            }
-            return
-        }
-
-        syncTask = Task(priority: .userInitiated) {
-            await run()
-        }
+  func start(retry: Bool = false) async {
+    if retry {
+      self.retryAttempts = 0
+      self.serviceFailureRetryAttempts = 0
+      self.backoffTimer?.invalidate()
+      self.backoffTimer = nil
     }
-
-    func stop() async {
-        syncTask?.cancel()
-        self.backoffTimer?.invalidate()
-        self.backoffTimer = nil
-        await stopAllActions()
-        retryAttempts = 0
-        serviceFailureRetryAttempts = 0
+    
+    guard await canStartSync() else {
+      if await isIdle() {
+        logger.warn("max retry attempts reached on \(await context.state) state")
+        await send(event: .failed(ZcashError.compactBlockProcessorMaxAttemptsReached(config.retries)))
+      } else {
+        logger.debug("Warning: compact block processor was started while busy!!!!")
+        afterSyncHooksManager.insert(hook: .anotherSync)
+      }
+      return
     }
-
-    func latestHeight() async throws -> BlockHeight {
-        try await blockDownloaderService.latestBlockHeight()
+    
+    syncTask = Task(priority: .userInitiated) {
+      await run()
     }
+  }
+  
+  func stop() async {
+    syncTask?.cancel()
+    self.backoffTimer?.invalidate()
+    self.backoffTimer = nil
+    await stopAllActions()
+    retryAttempts = 0
+    serviceFailureRetryAttempts = 0
+  }
+  
+  
+  
+  func latestHeight() async throws -> BlockHeight {
+    try await blockDownloaderService.latestBlockHeight()
+  }
+  
+  func lastScannedHeight() async throws -> BlockHeight {
+    await latestBlocksDataProvider.fullyScannedHeight
+  }
+  
 }
 
 // MARK: - Rewind
@@ -410,7 +417,7 @@ extension CompactBlockProcessor {
         
         (actions[.processSuggestedScanRanges] as? ProcessSuggestedScanRangesAction)?.service = updatedLWDService
         (actions[.updateChainTip] as? UpdateChainTipAction)?.service = updatedLWDService
-        (actions[.updateSubtreeRoots] as? UpdateSubtreeRootsAction)?.service = updatedLWDService
+        //(actions[.updateSubtreeRoots] as? UpdateSubtreeRootsAction)?.service = updatedLWDService
         (actions[.validateServer] as? ValidateServerAction)?.service = updatedLWDService
         self.service = updatedLWDService
         
@@ -441,9 +448,9 @@ extension CompactBlockProcessor {
         (actions[.enhance] as? EnhanceAction)?.blockEnhancer = updatedEnhancer
 
         // UTXOFetcher
-        let updatedUTXOFetcher = container.resolve(UTXOFetcher.self)
+        /*let updatedUTXOFetcher = container.resolve(UTXOFetcher.self)
 
-        (actions[.fetchUTXO] as? FetchUTXOsAction)?.utxoFetcher = updatedUTXOFetcher
+        (actions[.fetchUTXO] as? FetchUTXOsAction)?.utxoFetcher = updatedUTXOFetcher*/
     }
 }
 
@@ -574,8 +581,8 @@ extension CompactBlockProcessor {
                 case ZcashError.serviceGetInfoFailed, ZcashError.serviceLatestBlockFailed,
                     ZcashError.serviceLatestBlockHeightFailed, ZcashError.serviceBlockRangeFailed,
                     ZcashError.serviceSubmitFailed, ZcashError.serviceFetchTransactionFailed,
-                    ZcashError.serviceFetchUTXOsFailed, ZcashError.serviceBlockStreamFailed,
-                    ZcashError.serviceSubtreeRootsStreamFailed: serviceError = true
+                    /*ZcashError.serviceFetchUTXOsFailed,*/ ZcashError.serviceBlockStreamFailed/*,
+                    ZcashError.serviceSubtreeRootsStreamFailed*/: serviceError = true
                 default: serviceError = false
                 }
 
@@ -655,8 +662,9 @@ extension CompactBlockProcessor {
             break
         case .enhance:
             await send(event: .startedEnhancing)
-        case .fetchUTXO:
-            await send(event: .startedFetching)
+        //case .fetchUTXO:
+        //    break
+                /*await send(event: .startedFetching)*/
         case .handleSaplingParams:
             break
         case .clearCache:
@@ -893,3 +901,4 @@ extension CompactBlockProcessor {
         }
     }
 }
+

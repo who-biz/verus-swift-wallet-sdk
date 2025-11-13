@@ -31,10 +31,10 @@ extension SaplingParametersHandlerImpl: SaplingParametersHandler {
             let totalSaplingBalance =
                 try await rustBackend.getWalletSummary()?.accountBalances[0]?.saplingBalance.total().amount
                 ?? 0
-            let totalTransparentBalance = try await rustBackend.getTransparentBalance(account: Int32(0))
+            //let totalTransparentBalance = try await rustBackend.getTransparentBalance(account: Int32(0))
 
             // Download Sapling parameters only if sapling funds are detected.
-            guard totalSaplingBalance > 0 || totalTransparentBalance > 0 else { return }
+            guard totalSaplingBalance > 0 /*|| totalTransparentBalance > 0*/ else { return }
         } catch {
             // if sapling balance can't be detected of we fail to obtain the balance
             // for some reason we shall not proceed to download the parameters and

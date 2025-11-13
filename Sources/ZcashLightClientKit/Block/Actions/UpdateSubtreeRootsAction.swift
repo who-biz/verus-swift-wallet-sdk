@@ -22,66 +22,67 @@ final class UpdateSubtreeRootsAction {
 }
 
 extension UpdateSubtreeRootsAction: Action {
-    var removeBlocksCacheWhenFailed: Bool { false }
-
-    func run(with context: ActionContext, didUpdate: @escaping (CompactBlockProcessor.Event) async -> Void) async throws -> ActionContext {
-        var request = GetSubtreeRootsArg()
-        request.shieldedProtocol = .sapling
-        
-        logger.debug("Attempt to get subtree roots, this may fail because lightwalletd may not support Spend before Sync.")
-        let stream = service.getSubtreeRoots(request)
-        
-        var saplingRoots: [SubtreeRoot] = []
-        
-        do {
-            for try await subtreeRoot in stream {
-                saplingRoots.append(subtreeRoot)
-            }
-        } catch ZcashError.serviceSubtreeRootsStreamFailed(LightWalletServiceError.timeOut) {
-            throw ZcashError.serviceSubtreeRootsStreamFailed(LightWalletServiceError.timeOut)
-        }
-
-        logger.debug("Sapling tree has \(saplingRoots.count) subtrees")
-        do {
-            try await rustBackend.putSaplingSubtreeRoots(startIndex: UInt64(request.startIndex), roots: saplingRoots)
-            
-            await context.update(state: .updateChainTip)
-        } catch {
-            logger.debug("putSaplingSubtreeRoots failed with error \(error.localizedDescription)")
-            throw ZcashError.compactBlockProcessorPutSaplingSubtreeRoots(error)
-        }
-
-        if !saplingRoots.isEmpty {
-            logger.debug("Found Sapling subtree roots, SbS supported, fetching Orchard subtree roots")
-
-            var orchardRequest = GetSubtreeRootsArg()
-            orchardRequest.shieldedProtocol = .orchard
-
-            let stream = service.getSubtreeRoots(orchardRequest)
-
-            var orchardRoots: [SubtreeRoot] = []
-
-            do {
-                for try await subtreeRoot in stream {
-                    orchardRoots.append(subtreeRoot)
-                }
-            } catch ZcashError.serviceSubtreeRootsStreamFailed(LightWalletServiceError.timeOut) {
-                throw ZcashError.serviceSubtreeRootsStreamFailed(LightWalletServiceError.timeOut)
-            }
-
-            logger.debug("Orchard tree has \(orchardRoots.count) subtrees")
-            do {
-                try await rustBackend.putOrchardSubtreeRoots(startIndex: UInt64(orchardRequest.startIndex), roots: orchardRoots)
-
-                await context.update(state: .updateChainTip)
-            } catch {
-                logger.debug("putOrchardSubtreeRoots failed with error \(error.localizedDescription)")
-                throw ZcashError.compactBlockProcessorPutOrchardSubtreeRoots(error)
-            }
-        }
-
-        return context
-    }
-
-    func stop() async { }
-}
+ var removeBlocksCacheWhenFailed: Bool { false }
+ 
+ func run(with context: ActionContext, didUpdate: @escaping (CompactBlockProcessor.Event) async -> Void) async throws -> ActionContext {
+ var request = GetSubtreeRootsArg()
+ request.shieldedProtocol = .sapling
+ 
+ logger.debug("Attempt to get subtree roots, this may fail because lightwalletd may not support Spend before Sync.")
+ let stream = service.getSubtreeRoots(request)
+ 
+ var saplingRoots: [SubtreeRoot] = []
+ 
+ do {
+ for try await subtreeRoot in stream {
+ saplingRoots.append(subtreeRoot)
+ }
+ } catch ZcashError.serviceSubtreeRootsStreamFailed(LightWalletServiceError.timeOut) {
+ throw ZcashError.serviceSubtreeRootsStreamFailed(LightWalletServiceError.timeOut)
+ }
+ 
+ logger.debug("Sapling tree has \(saplingRoots.count) subtrees")
+ do {
+ try await rustBackend.putSaplingSubtreeRoots(startIndex: UInt64(request.startIndex), roots: saplingRoots)
+ 
+ await context.update(state: .updateChainTip)
+ } catch {
+ logger.debug("putSaplingSubtreeRoots failed with error \(error.localizedDescription)")
+ throw ZcashError.compactBlockProcessorPutSaplingSubtreeRoots(error)
+ }
+ 
+ if !saplingRoots.isEmpty {
+ logger.debug("Found Sapling subtree roots, SbS supported, fetching Orchard subtree roots")
+ 
+ var orchardRequest = GetSubtreeRootsArg()
+ orchardRequest.shieldedProtocol = .orchard
+ 
+ let stream = service.getSubtreeRoots(orchardRequest)
+ 
+ var orchardRoots: [SubtreeRoot] = []
+ 
+ do {
+ for try await subtreeRoot in stream {
+ orchardRoots.append(subtreeRoot)
+ }
+ } catch ZcashError.serviceSubtreeRootsStreamFailed(LightWalletServiceError.timeOut) {
+ throw ZcashError.serviceSubtreeRootsStreamFailed(LightWalletServiceError.timeOut)
+ }
+ 
+ logger.debug("Orchard tree has \(orchardRoots.count) subtrees")
+ do {
+ try await rustBackend.putOrchardSubtreeRoots(startIndex: UInt64(orchardRequest.startIndex), roots: orchardRoots)
+ 
+ await context.update(state: .updateChainTip)
+ } catch {
+ logger.debug("putOrchardSubtreeRoots failed with error \(error.localizedDescription)")
+ throw ZcashError.compactBlockProcessorPutOrchardSubtreeRoots(error)
+ }
+ }
+ 
+ return context
+ }
+ 
+ func stop() async { }
+ }
+ 

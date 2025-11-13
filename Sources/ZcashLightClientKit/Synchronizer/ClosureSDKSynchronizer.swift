@@ -32,13 +32,15 @@ extension ClosureSDKSynchronizer: ClosureSynchronizer {
     public var eventStream: AnyPublisher<SynchronizerEvent, Never> { synchronizer.eventStream }
 
     public func prepare(
-        with seed: [UInt8]?,
+        transparent_key: [UInt8]?,
+        extsk: [UInt8]?,
+        seed: [UInt8]?,
         walletBirthday: BlockHeight,
         for walletMode: WalletInitMode,
         completion: @escaping (Result<Initializer.InitializationResult, Error>) -> Void
     ) {
         AsyncToClosureGateway.executeThrowingAction(completion) {
-            return try await self.synchronizer.prepare(with: seed, walletBirthday: walletBirthday, for: walletMode)
+            return try await self.synchronizer.prepare(transparent_key: transparent_key, extsk: extsk, seed: seed, walletBirthday: walletBirthday, for: walletMode)
         }
     }
 
@@ -82,7 +84,7 @@ extension ClosureSDKSynchronizer: ClosureSynchronizer {
         }
     }
 
-    public func proposeShielding(
+/*    public func proposeShielding(
         accountIndex: Int,
         shieldingThreshold: Zatoshi,
         memo: Memo,
@@ -98,7 +100,7 @@ extension ClosureSDKSynchronizer: ClosureSynchronizer {
             )
         }
     }
-
+*/
     public func createProposedTransactions(
         proposal: Proposal,
         spendingKey: UnifiedSpendingKey,
@@ -122,7 +124,7 @@ extension ClosureSDKSynchronizer: ClosureSynchronizer {
         }
     }
 
-    @available(*, deprecated, message: "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.")
+    /*@available(*, deprecated, message: "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.")
     public func shieldFunds(
         spendingKey: UnifiedSpendingKey,
         memo: Memo,
@@ -132,7 +134,7 @@ extension ClosureSDKSynchronizer: ClosureSynchronizer {
         AsyncToClosureGateway.executeThrowingAction(completion) {
             try await self.synchronizer.shieldFunds(spendingKey: spendingKey, memo: memo, shieldingThreshold: shieldingThreshold)
         }
-    }
+    }*/
 
     public func clearedTransactions(completion: @escaping ([ZcashTransaction.Overview]) -> Void) {
         AsyncToClosureGateway.executeAction(completion) {
@@ -182,12 +184,18 @@ extension ClosureSDKSynchronizer: ClosureSynchronizer {
         }
     }
 
+    public func lastScannedHeight(completion: @escaping (Result<BlockHeight, Error>) -> Void) {
+        AsyncToClosureGateway.executeThrowingAction(completion) {
+            try await self.synchronizer.lastScannedHeight()
+        }
+    }
+/*
     public func refreshUTXOs(address: TransparentAddress, from height: BlockHeight, completion: @escaping (Result<RefreshedUTXOs, Error>) -> Void) {
         AsyncToClosureGateway.executeThrowingAction(completion) {
             try await self.synchronizer.refreshUTXOs(address: address, from: height)
         }
     }
-
+*/
     public func getAccountBalance(accountIndex: Int, completion: @escaping (Result<AccountBalance?, Error>) -> Void) {
         AsyncToClosureGateway.executeThrowingAction(completion) {
             try await self.synchronizer.getAccountBalance(accountIndex: accountIndex)

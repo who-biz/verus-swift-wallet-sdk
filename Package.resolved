@@ -118,12 +118,12 @@
       }
     },
     {
-      "identity" : "zcash-light-client-ffi",
+      "identity" : "verus-light-client-ffi",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/zcash-hackworks/zcash-light-client-ffi",
+      "location" : "https://github.com/who-biz/verus-light-client-ffi",
       "state" : {
-        "revision" : "9314c83d7a09d88e1c0bd3ff3738a50833325059",
-        "version" : "0.8.0"
+        "branch" : "verus",
+        "revision" : "7de71ad71b655921787614491e467f9c57ec9068"
       }
     }
   ],

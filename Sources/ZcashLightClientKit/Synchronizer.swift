@@ -42,6 +42,8 @@ public struct SynchronizerState: Equatable {
     public var syncStatus: SyncStatus
     /// height of the latest block on the blockchain known to this synchronizer.
     public var latestBlockHeight: BlockHeight
+    /// height of the last downloaded & scanned block.
+    public var lastScannedHeight: BlockHeight
 
     /// Represents a synchronizer that has made zero progress hasn't done a sync attempt
     public static var zero: SynchronizerState {
@@ -49,7 +51,8 @@ public struct SynchronizerState: Equatable {
             syncSessionID: .nullID,
             accountBalance: .zero,
             internalSyncStatus: .unprepared,
-            latestBlockHeight: .zero
+            latestBlockHeight: .zero,
+            lastScannedHeight: .zero,
         )
     }
     
@@ -57,12 +60,14 @@ public struct SynchronizerState: Equatable {
         syncSessionID: UUID,
         accountBalance: AccountBalance?,
         internalSyncStatus: InternalSyncStatus,
-        latestBlockHeight: BlockHeight
+        latestBlockHeight: BlockHeight,
+        lastScannedHeight: BlockHeight
     ) {
         self.syncSessionID = syncSessionID
         self.accountBalance = accountBalance
         self.internalSyncStatus = internalSyncStatus
         self.latestBlockHeight = latestBlockHeight
+        self.lastScannedHeight = lastScannedHeight
         self.syncStatus = internalSyncStatus.mapToSyncStatus()
     }
 }
@@ -124,7 +129,9 @@ public protocol Synchronizer: AnyObject {
     ///                                won't do anything.
     ///     - Some other `ZcashError` thrown by lower layer of the SDK.
     func prepare(
-        with seed: [UInt8]?,
+        transparent_key: [UInt8]?,
+        extsk: [UInt8]?,
+        seed: [UInt8]?,
         walletBirthday: BlockHeight,
         for walletMode: WalletInitMode
     ) async throws -> Initializer.InitializationResult
@@ -186,13 +193,13 @@ public protocol Synchronizer: AnyObject {
     ///
     /// If `prepare()` hasn't already been called since creation of the synchronizer instance or since the last wipe then this method throws
     /// `SynchronizerErrors.notPrepared`.
-    func proposeShielding(
+  /*  func proposeShielding(
         accountIndex: Int,
         shieldingThreshold: Zatoshi,
         memo: Memo,
         transparentReceiver: TransparentAddress?
     ) async throws -> Proposal?
-
+*/
     /// Creates the transactions in the given proposal.
     ///
     /// - Parameter proposal: the proposal for which to create transactions.
@@ -243,13 +250,13 @@ public protocol Synchronizer: AnyObject {
     ///
     /// - Note: If `prepare()` hasn't already been called since creating of synchronizer instance or since the last wipe then this method throws
     /// `SynchronizerErrors.notPrepared`.
-    @available(*, deprecated, message: "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.")
+  /*  @available(*, deprecated, message: "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.")
     func shieldFunds(
         spendingKey: UnifiedSpendingKey,
         memo: Memo,
         shieldingThreshold: Zatoshi
     ) async throws -> ZcashTransaction.Overview
-
+*/
     /// all the transactions that are on the blockchain
     var transactions: [ZcashTransaction.Overview] { get async }
 
@@ -298,11 +305,18 @@ public protocol Synchronizer: AnyObject {
     /// Returns the latest block height from the provided Lightwallet endpoint
     func latestHeight() async throws -> BlockHeight
 
+    /// Returns the last scanned/downloaded height
+    func lastScannedHeight() async throws -> BlockHeight
+  
+    /// Returns the linear Scanning progress between network block height (lightwalletd endpoint, not storage)
+    /// and last scanned height, as a percentage. Floor handling is required elsewhere for less precision
+    func linearScanProgressForNetworkHeight(networkHeight: BlockHeight) async throws -> Float
+
     /// Returns the latests UTXOs for the given address from the specified height on
     ///
     /// If `prepare()` hasn't already been called since creation of the synchronizer instance or since the last wipe then this method throws
     /// `SynchronizerErrors.notPrepared`.
-    func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) async throws -> RefreshedUTXOs
+//    func refreshUTXOs(address: TransparentAddress, from height: BlockHeight) async throws -> RefreshedUTXOs
 
     /// Account balances from the given account index
     /// - Parameter accountIndex: the index of the account
@@ -360,7 +374,7 @@ public protocol Synchronizer: AnyObject {
     /// Checks whether the given seed is relevant to any of the derived accounts in the wallet.
     ///
     /// - parameter seed: byte array of the seed
-    func isSeedRelevantToAnyDerivedAccount(seed: [UInt8]) async throws -> Bool
+    func isSeedRelevantToAnyDerivedAccount(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8]) async throws -> Bool
 }
 
 public enum SyncStatus: Equatable {
@@ -569,3 +583,4 @@ extension UUID {
         UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
     }
 }
+
