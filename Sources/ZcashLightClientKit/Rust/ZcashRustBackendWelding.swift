@@ -93,7 +93,7 @@ protocol ZcashRustBackendWelding {
     /// - parameter account; the account index to query
     /// - Throws:
     ///     - `rustGetTransparentBalanceNegativeAccount` if `account` is < 0.
-    ///     - `rustGetTransparentBalance` if rust layer returns error
+    ///     - `rustGetTransparentBalance` if rust layer returns error.
     func getTransparentBalance(account: Int32) async throws -> Int64
 
     /// Initializes the data db. This will performs any migrations needed on the sqlite file
@@ -205,7 +205,6 @@ protocol ZcashRustBackendWelding {
         value: Int64,
         height: BlockHeight
     ) async throws
- 
 
     /// Select transaction inputs, compute fees, and construct a proposal for a transaction
     /// that can then be authorized and made ready for submission to the network with

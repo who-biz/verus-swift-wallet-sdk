@@ -23,7 +23,7 @@ public struct SaplingSpendingKey: Equatable, Undescribable {
 }
 
 /// Sapling Extended Spending Key
-public struct SaplingExtendedSpendingKey: Equatable,/* StringEncoded,*/ Undescribable {
+public struct SaplingExtendedSpendingKey: Equatable, StringEncoded, Undescribable {
     let encoding: String
 
     public var stringEncoded: String {
@@ -269,4 +269,3 @@ public enum Recipient: Equatable, StringEncoded {
         }
     }
 }
-

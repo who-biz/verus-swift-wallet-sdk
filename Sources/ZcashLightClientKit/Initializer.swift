@@ -401,6 +401,7 @@ public class Initializer {
     func initialize(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?, walletBirthday: BlockHeight, for walletMode: WalletInitMode) async throws -> InitializationResult {
         try await storage.create()
 
+        //TODO: also look into seedRequired here, TODO note already present in SDKSynchronizer
         if case .seedRequired = try await rustBackend.initDataDb(transparent_key: transparent_key, extsk: extsk, seed: seed) {
             return .seedRequired
         }

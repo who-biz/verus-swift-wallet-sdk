@@ -1,16 +1,13 @@
 //
 //  ZcashKeyDerivationBackend.swift
-//
+//  
 //
 //  Created by Francisco Gindre on 4/7/23.
 //
 
 import Foundation
 
-
 struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
-
-    
     let networkType: NetworkType
 
     // MARK: Address metadata and validation
@@ -112,23 +109,9 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
 
         return zcashlc_is_valid_unified_full_viewing_key([CChar](key.utf8CString), networkType.networkId)
     }
-    
-    func deriveShieldedAddress(_ ufvk: String) throws -> String {
-        guard !ufvk.containsCStringNullBytesBeforeStringEnding() else {
-            throw ZcashError.rustDeriveShieldedAddress(
-                "Input ufvk was empty - cannot derive Shielded Address"
-            )
-        }
-        let address = zcashlc_derive_shielded_address_from_viewing_key([CChar](ufvk.utf8CString), networkType.networkId)
-        guard let derived = String(validatingUTF8: address!) else {
-            throw ZcashError.rustDeriveShieldedAddress (
-                "Failed to convert shielded address to Swift String - cannot derive Shielded Address"
-            )
-        }
-        return derived
-    }
 
     // MARK: Address Derivation
+
     func deriveUnifiedSpendingKey(
         transparent_key: [UInt8]?,
         extsk: [UInt8]?,
@@ -168,7 +151,22 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
 
         return binaryKey.unsafeToUnifiedSpendingKey(network: networkType)
     }
-    
+
+    func deriveShieldedAddress(_ ufvk: String) throws -> String {
+        guard !ufvk.containsCStringNullBytesBeforeStringEnding() else {
+            throw ZcashError.rustDeriveShieldedAddress(
+                "Input ufvk was empty - cannot derive Shielded Address"
+            )
+        }
+        let address = zcashlc_derive_shielded_address_from_viewing_key([CChar](ufvk.utf8CString), networkType.networkId)
+        guard let derived = String(validatingUTF8: address!) else {
+            throw ZcashError.rustDeriveShieldedAddress (
+                "Failed to convert shielded address to Swift String - cannot derive Shielded Address"
+            )
+        }
+        return derived
+    }
+
     func deriveSaplingSpendingKey(
         seed: [UInt8],
         accountIndex: Int32
@@ -192,28 +190,6 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
 
         return binaryKey.unsafeToSaplingSpendingKey(network: networkType)
     }
-
-/*    func deriveUnifiedSpendingKey(
-        from seed: [UInt8],
-        accountIndex: Int32
-    ) throws -> UnifiedSpendingKey {
-        let binaryKeyPtr = seed.withUnsafeBufferPointer { seedBufferPtr in
-            return zcashlc_derive_spending_key(
-                seedBufferPtr.baseAddress,
-                UInt(seed.count),
-                accountIndex,
-                networkType.networkId
-            )
-        }
-
-        defer { zcashlc_free_binary_key(binaryKeyPtr) }
-
-        guard let binaryKey = binaryKeyPtr?.pointee else {
-            throw ZcashError.rustDeriveUnifiedSpendingKey(lastErrorMessage(fallback: "`deriveUnifiedSpendingKey` failed with unknown error"))
-        }
-
-        return binaryKey.unsafeToUnifiedSpendingKey(network: networkType)
-    }*/
     
     func deriveUnifiedFullViewingKey(from spendingKey: UnifiedSpendingKey) throws -> UnifiedFullViewingKey {
         let extfvk = try spendingKey.bytes.withUnsafeBufferPointer { uskBufferPtr -> UnsafeMutablePointer<CChar> in
@@ -292,4 +268,3 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
         }
     }
 }
-

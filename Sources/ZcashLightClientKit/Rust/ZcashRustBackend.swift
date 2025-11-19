@@ -8,9 +8,7 @@
 // swiftlint:disable type_body_length
 import Foundation
 
-
 struct ZcashRustBackend: ZcashRustBackendWelding {
-    
     let minimumConfirmations: UInt32 = 10
     let minimumShieldingConfirmations: UInt32 = 1
     let useZIP317Fees = true
@@ -626,7 +624,6 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
             }
         }
     }
- 
 
     @DBActor
     func updateChainTip(height: Int32) async throws {
@@ -989,4 +986,3 @@ struct FfiTxId {
         }
     }
 }
-

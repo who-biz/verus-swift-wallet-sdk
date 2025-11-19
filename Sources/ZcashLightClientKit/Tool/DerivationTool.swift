@@ -55,8 +55,6 @@ public protocol KeyDeriving {
 }
 
 public class DerivationTool: KeyDeriving {
-    
-    
     let backend: ZcashKeyDerivationBackendWelding
     
     public init(networkType: NetworkType) {
@@ -226,4 +224,3 @@ public extension UnifiedAddress {
         try DerivationTool(networkType: networkType).transparentReceiver(from: self)
     }
 }
-

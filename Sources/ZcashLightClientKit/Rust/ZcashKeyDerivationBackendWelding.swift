@@ -1,6 +1,6 @@
 //
 //  ZcashKeyDerivationBackendWelding.swift
-//
+//  
 //
 //  Created by Michal Fousek on 11.04.2023.
 //
@@ -90,4 +90,3 @@ protocol ZcashKeyDerivationBackendWelding {
     ///     - `rustGetTransparentReceiverInvalidReceiver` if generated transparent receiver is invalid.
     func getTransparentReceiver(for uAddr: UnifiedAddress) throws -> TransparentAddress
 }
-

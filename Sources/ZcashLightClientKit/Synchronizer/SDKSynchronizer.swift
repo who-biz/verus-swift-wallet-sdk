@@ -11,8 +11,7 @@ import Combine
 
 /// Synchronizer implementation for UIKit and iOS 13+
 // swiftlint:disable type_body_length
-public class SDKSynchronizer: Synchronizer {    
-    
+public class SDKSynchronizer: Synchronizer {
     public var alias: ZcashSynchronizerAlias { initializer.alias }
 
     private lazy var streamsUpdateQueue = { DispatchQueue(label: "streamsUpdateQueue_\(initializer.alias.description)") }()
@@ -831,4 +830,3 @@ extension SessionTicker {
         }
     }
 }
-
