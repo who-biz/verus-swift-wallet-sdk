@@ -106,14 +106,10 @@ struct ZcashRustBackend: ZcashRustBackendWelding {
     }
 
     @DBActor
-    func isSeedRelevantToAnyDerivedAccount(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8]) async throws -> Bool {
+    func isSeedRelevantToAnyDerivedAccount(seed: [UInt8]) async throws -> Bool {
         let result = zcashlc_is_seed_relevant_to_any_derived_account(
             dbData.0,
             dbData.1,
-            transparent_key,
-            UInt(transparent_key.count),
-            extsk,
-            UInt(extsk.count),
             seed,
             UInt(seed.count),
             networkType.networkId

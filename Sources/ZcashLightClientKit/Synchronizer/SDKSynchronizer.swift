@@ -631,8 +631,8 @@ public class SDKSynchronizer: Synchronizer {
         return subject.eraseToAnyPublisher()
     }
 
-    public func isSeedRelevantToAnyDerivedAccount(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8]) async throws -> Bool {
-        try await initializer.rustBackend.isSeedRelevantToAnyDerivedAccount(transparent_key: transparent_key, extsk: extsk, seed: seed)
+    public func isSeedRelevantToAnyDerivedAccount(seed: [UInt8]) async throws -> Bool {
+        try await initializer.rustBackend.isSeedRelevantToAnyDerivedAccount(seed: seed)
     }
 
     // MARK: Server switch

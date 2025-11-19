@@ -374,7 +374,7 @@ public protocol Synchronizer: AnyObject {
     /// Checks whether the given seed is relevant to any of the derived accounts in the wallet.
     ///
     /// - parameter seed: byte array of the seed
-    func isSeedRelevantToAnyDerivedAccount(transparent_key: [UInt8], extsk: [UInt8], seed: [UInt8]) async throws -> Bool
+    func isSeedRelevantToAnyDerivedAccount(seed: [UInt8]) async throws -> Bool
 }
 
 public enum SyncStatus: Equatable {
