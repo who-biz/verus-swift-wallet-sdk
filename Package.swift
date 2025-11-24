@@ -24,7 +24,7 @@ let package = Package(
             dependencies: [
                 .product(name: "SQLite", package: "SQLite.swift"),
                 .product(name: "GRPC", package: "grpc-swift"),
-                .product(name: "libzcashlc", package: "verus-light-client-ffi")
+                .product(name: "libzcashlc", package: "verus-lightclient-ffi")
             ],
             exclude: [
                 "Modules/Service/GRPC/ProtoBuf/proto/compact_formats.proto",
