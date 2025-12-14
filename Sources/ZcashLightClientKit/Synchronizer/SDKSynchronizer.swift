@@ -134,7 +134,6 @@ public class SDKSynchronizer: Synchronizer {
             throw error
         }
 
-        //TODO: look into seedRequired case below. Don't recall seeing this in rust layer
         if case .seedRequired = try await self.initializer.initialize(transparent_key: transparent_key, extsk: extsk, seed: seed, walletBirthday: walletBirthday, for: walletMode) {
             return .seedRequired
         }
