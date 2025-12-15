@@ -17,6 +17,8 @@ let package = Package(
         .package(url: "https://github.com/grpc/grpc-swift.git", from: "1.19.1"),
         .package(url: "https://github.com/stephencelis/SQLite.swift.git", from: "0.14.1"),
         .package(url: "https://github.com/who-biz/verus-lightclient-ffi", branch: "master")
+        //TODO: mirror zcash 'exact' versioning for prod & change repo to Veruscoin/verus-lightclient-ffi
+        //.package(url: "https://github.com/zcash-hackworks/zcash-light-client-ffi", exact: "0.8.1")
     ],
     targets: [
         .target(
@@ -24,7 +26,7 @@ let package = Package(
             dependencies: [
                 .product(name: "SQLite", package: "SQLite.swift"),
                 .product(name: "GRPC", package: "grpc-swift"),
-                .product(name: "libzcashlc", package: "verus-light-client-ffi")
+                .product(name: "libzcashlc", package: "verus-lightclient-ffi")
             ],
             exclude: [
                 "Modules/Service/GRPC/ProtoBuf/proto/compact_formats.proto",

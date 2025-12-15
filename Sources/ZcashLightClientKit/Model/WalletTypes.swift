@@ -16,6 +16,7 @@ public struct UnifiedSpendingKey: Equatable, Undescribable {
     public let account: UInt32
 }
 
+// we use this one for verus, identically structured to unified, does not expose string
 public struct SaplingSpendingKey: Equatable, Undescribable {
     let network: NetworkType
     let bytes: [UInt8]
@@ -30,7 +31,7 @@ public struct SaplingExtendedSpendingKey: Equatable, StringEncoded, Undescribabl
         encoding
     }
 
-    /// Initializes a new Sapling Extended Full Viewing Key from the provided string encoding
+    /// Initializes a new Sapling Extended Spending Key from the provided string encoding
     /// - Parameters:
     ///  - parameter encoding: String encoding of ExtSK
     ///  - parameter network: `NetworkType` corresponding to the encoding (Mainnet or Testnet)
