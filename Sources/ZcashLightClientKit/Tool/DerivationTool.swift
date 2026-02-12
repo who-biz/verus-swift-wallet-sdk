@@ -27,7 +27,7 @@ public protocol KeyDeriving {
     func deriveUnifiedSpendingKey(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?, accountIndex: Int) throws -> UnifiedSpendingKey
     
     func deriveSaplingSpendingKey(seed: [UInt8], accountIndex: Int) throws -> SaplingSpendingKey
-    
+
     func zGetEncryptionAddress(seed: [UInt8]?, extsk: [UInt8]?, hdIndex: Int32, encryptionIndex: Int32, fromId: [UInt8]?, toId: [UInt8]?, returnSecret: Bool) throws -> ChannelKeys
 
     func deriveShieldedAddress(from ufvk: String) throws -> String
@@ -105,7 +105,7 @@ public class DerivationTool: KeyDeriving {
         //TODO: add error types for narrowing failure in Int->Int32 conversion below
         guard hdIndex >= -1, let hdIndex = Int32(exactly: hdIndex) else { // throw error }
         guard encryptionIndex >= 0, let encryptionIndex = Int32(exactly: encryptionIndex) else { // throw error }
-        return backend.zGetEncryptionAddress(seed: seed, extsk: extsk, hdIndex: hdIndex, encryptionIndex: encryptionIndex, fromId: fromId, toId: toId, returnSecret: returnSecret)           
+        return backend.zGetEncryptionAddress(seed: seed, extsk: extsk, hdIndex: hdIndex, encryptionIndex: encryptionIndex, fromId: fromId, toId: toId, returnSecret: returnSecret)
     }
 
     public func receiverTypecodesFromUnifiedAddress(_ address: UnifiedAddress) throws -> [UnifiedAddress.ReceiverTypecodes] {
@@ -214,6 +214,7 @@ public extension UnifiedSpendingKey {
     }
 }
 
+//TODO: check if we need equivalent for ChannelKeys
 public extension SaplingSpendingKey {
     func map<T>(_ transform: (SaplingSpendingKey) throws -> T) rethrows -> T {
         try transform(self)
