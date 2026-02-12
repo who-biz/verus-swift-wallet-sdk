@@ -65,6 +65,8 @@ protocol ZcashKeyDerivationBackendWelding {
     func deriveUnifiedSpendingKey(transparent_key: [UInt8]?, extsk: [UInt8]?, seed: [UInt8]?, accountIndex: Int32) throws -> UnifiedSpendingKey
     
     func deriveSaplingSpendingKey(seed: [UInt8], accountIndex: Int32) throws -> SaplingSpendingKey
+
+    func zGetEncryptionAddress(seed: [UInt8]?, extsk: [UInt8]?, hdIndex: Int32, encryptionIndex: Int32, fromId: [UInt8]?, toId: [UInt8]?, returnSecret: Bool) throws -> ChannelKeys
     
     /// Derives a `UnifiedFullViewingKey` from a `UnifiedSpendingKey`
     /// - Parameter spendingKey: the `UnifiedSpendingKey` to derive from

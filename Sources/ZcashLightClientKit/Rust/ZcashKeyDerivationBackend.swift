@@ -194,20 +194,12 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
     func zGetEncryptionAddress(
         seed: [UInt8]?,
         extsk: [UInt8]?,
-        hdIndex: Int,              // caller uses -1 for "none"
-        encryptionIndex: Int,
+        hdIndex: Int32,
+        encryptionIndex: Int32,
         fromId: [UInt8]?,
         toId: [UInt8]?,
         returnSecret: Bool
     ) throws -> ChannelKeys {
-        // narrow indexes from RN Bridge
-        guard let hdIndexI32 = Int32(exactly: hdIndex) else {
-            // throw error, narrowing not possible
-        }
-        guard let encryptionIndexI32 = Int32(exactly: encryptionIndex) else {
-            // throw error, narrowing not possible
-        }
-
         let ffiChannelKeysPtr: UnsafeMutablePointer<FfiChannelKeys>? = (seed ?? []).withUnsafeBytes { seedBuf in
             (extsk ?? []).withUnsafeBytes { extskBuf in
                 (fromId ?? []).withUnsafeBytes { fromBuf in
