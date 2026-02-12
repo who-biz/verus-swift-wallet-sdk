@@ -23,6 +23,14 @@ public struct SaplingSpendingKey: Equatable, Undescribable {
     public let account: UInt32
 }
 
+//TODO: we need to check this, and maybe use more elegant init() member func?
+public struct ChannelKeys: Equatable, Undescribable {
+    public let address: String
+    let fullViewingKey: [UInt8]
+    let incomingViewingKey: [UInt8]
+    let spendingKey: [UInt8]?
+}
+
 /// Sapling Extended Spending Key
 public struct SaplingExtendedSpendingKey: Equatable, StringEncoded, Undescribable {
     let encoding: String

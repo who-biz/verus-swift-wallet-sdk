@@ -190,6 +190,102 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
 
         return binaryKey.unsafeToSaplingSpendingKey(network: networkType)
     }
+
+    func zGetEncryptionAddress(
+        seed: [UInt8]?,
+        extsk: [UInt8]?,
+        hdIndex: Int,              // caller uses -1 for "none"
+        encryptionIndex: Int,
+        fromId: [UInt8]?,
+        toId: [UInt8]?,
+        returnSecret: Bool
+    ) throws -> ChannelKeys {
+        // narrow indexes from RN Bridge
+        guard let hdIndexI32 = Int32(exactly: hdIndex) else {
+            // throw error, narrowing not possible
+        }
+        guard let encryptionIndexI32 = Int32(exactly: encryptionIndex) else {
+            // throw error, narrowing not possible
+        }
+
+        let ffiChannelKeysPtr: UnsafeMutablePointer<FfiChannelKeys>? = (seed ?? []).withUnsafeBytes { seedBuf in
+            (extsk ?? []).withUnsafeBytes { extskBuf in
+                (fromId ?? []).withUnsafeBytes { fromBuf in
+                    (toId ?? []).withUnsafeBytes { toBuf in
+
+                        //TODO: check that 'assumingMemoryBound' is the correct thing to use here
+                        // it abides by swifts new memory management features, SDK seems a little outdated elsewhere
+                        let seedPtr = seed?.isEmpty == false
+                            ? seedBuf.baseAddress?.assumingMemoryBound(to: UInt8.self)
+                            : nil
+                        let extskPtr = extsk?.isEmpty == false
+                            ? extskBuf.baseAddress?.assumingMemoryBound(to: UInt8.self)
+                            : nil
+                        let fromPtr = fromId?.isEmpty == false
+                            ? fromBuf.baseAddress?.assumingMemoryBound(to: UInt8.self)
+                            : nil
+                        let toPtr = toId?.isEmpty == false
+                            ? toBuf.baseAddress?.assumingMemoryBound(to: UInt8.self)
+                            : nil
+
+                        return zcashlc_z_get_encryption_address(
+                            seedPtr,
+                            seed?.count ?? 0,
+                            extskPtr,
+                            extsk?.count ?? 0,
+                            hdIndexI32,
+                            encryptionIndexI32,
+                            fromPtr,
+                            fromId?.count ?? 0,
+                            toPtr,
+                            toId?.count ?? 0,
+                            returnSecret
+                        )
+                    }
+                }
+            }
+        }
+
+        guard let ffiChannelKeysPtr else {
+           // throw error, rust returned invalid ptr
+        }
+        defer { zcashlc_free_channel_keys(ckPtr) }
+
+        // cheap copy, ptr to ptr... we can eliminate but want to avoid 
+        let channelKeys = ffiChannelKeysPtr.pointee
+
+        //TODO: I don't think we need to check pointers for validity in zcashlc_z_get_encryption_address
+        // but we should double check that we don't, to be certain.  They should be valid for all non-optional retvals
+        // also check that the above does not need called with 'ffiChannelKeysPtr?.pointee' as I see other places in code
+
+        guard let address = String(validatingUTF8: channelKeys.address) else {
+            // throw error, invalid string encoding for address
+            // just mirroring TransparentAddress etc logic below, here
+        }
+
+        let fullViewingKey =
+            Array(UnsafeBufferPointer(start: channelKeys.full_viewing_key_ptr,
+                                      count: channelKeys.full_viewing_key_len))
+        let incomingViewingKey =
+            Array(UnsafeBufferPointer(start: channelKeys.incoming_viewing_key_ptr,
+                                      count: channelKeys.incoming_viewing_key_len))
+
+        let spendingKey: [UInt8]?
+        if channelKeys.spending_key_ptr != nil, channelKeys.spending_key_len > 0 {
+            spendingKey =
+                Array(UnsafeBufferPointer(start: channelKeys.spending_key_ptr,
+                                          count: channelKeys.spending_key_len))
+        } else {
+            spendingKey = nil
+        }
+
+        return ChannelKeys(
+            address: address,
+            fullViewingKey: fullViewingKey,
+            incomingViewingKey: incomingViewingKey,
+            spendingKey: spendingKey
+        )
+    }
     
     func deriveUnifiedFullViewingKey(from spendingKey: UnifiedSpendingKey) throws -> UnifiedFullViewingKey {
         let extfvk = try spendingKey.bytes.withUnsafeBufferPointer { uskBufferPtr -> UnsafeMutablePointer<CChar> in
