@@ -17,6 +17,7 @@ public enum Bech32DecodingError: Error {
 
 public enum Bech32EncodingError: Error {
   case invalidData
+  case invalidDataLength
 }
 
 public struct Bech32 {
