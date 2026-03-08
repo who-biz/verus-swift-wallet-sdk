@@ -190,8 +190,10 @@ public enum ZcashErrorCode: String {
     ///  Error from rust layer when calling ZcashRustBackend.deriveShieldedAddress
     case rustDeriveSaplingSpendingKey = "ZRUST0063"
     ///  Error from rust layer when calling ZcashRustBackend.deriveSaplingSpendingKey
-    case rustGetEncryptionAddress = "ZRUST0065"
+    case rustGetEncryptionAddress = "ZRUST0064"
     ///  Error from rust layer when calling ZcashRustBackend.zGetEncryptionAddress
+    case rustGetEncryptionAddress = "ZRUST0065"
+    ///  Error from rust layer when calling ZcashRustBackend.encryptVerusData
     case accountDAOGetAll = "ZADAO0001"
     /// Fetched accounts from SQLite but can't decode them.
     case accountDAOGetAllCantDecode = "ZADAO0002"

@@ -479,8 +479,11 @@ public enum ZcashError: Equatable, Error {
     /// Invalid account when trying to derive spending key
     /// ZDRVT0001
     case derivationToolSpendingKeyInvalidAccount
-    /// Invalid index for derivation, either hdIndex or encryptionIndex
+    /// Invalid byte length for address in encryption, not 43 bytes as it should be
     /// ZDRVT0002
+    case derivationEncryptInvalidAddressLength
+    /// Invalid index for the EncryptionAddress, either hdindex or encryptionindex
+    /// ZDRVT0003
     case derivationToolEncryptionAddressInvalidIndex
     /// Creation of the table for unspent transaction output failed.
     /// - `sqliteError` is error produced by SQLite library.

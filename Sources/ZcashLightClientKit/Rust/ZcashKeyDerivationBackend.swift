@@ -295,6 +295,81 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
             spendingKey: spendingKey
         )
     }
+
+    func encryptVerusData(
+        address: [UInt8],
+        dataToEncrypt: [UInt8],
+        returnSsk: Bool
+    ) throws -> EncryptedPayload {
+        let addressLen: UInt = UInt(address.count)
+        let dataLen: UInt32 = UInt32(dataToEncrypt.count)
+
+        @inline(__always)
+        func ptrOrNil(_ array: [UInt8], _ buf: UnsafeRawBufferPointer) -> UnsafePointer<UInt8>? {
+            guard !array.isEmpty else { return nil }
+            return buf.baseAddress?.assumingMemoryBound(to: UInt8.self)
+        }
+
+        let ffiEncryptedPayloadPtr: UnsafeMutablePointer<FfiEncryptedPayload>? =
+            address.withUnsafeBytes { addressBuf -> UnsafeMutablePointer<FfiEncryptedPayload>? in
+                dataToEncrypt.withUnsafeBytes { dataBuf -> UnsafeMutablePointer<FfiEncryptedPayload>? in
+                    let addressPtr = ptrOrNil(address, addressBuf)
+                    let dataPtr = ptrOrNil(dataToEncrypt, dataBuf)
+
+                    return zcashlc_encrypt_verus_data(
+                        addressPtr,
+                        addressLen,
+                        dataPtr,
+                        dataLen,
+                        returnSsk
+                    )
+                }
+            }
+
+        guard let ffiEncryptedPayloadPtr else {
+            throw ZcashError.rustEncryptData(
+                lastErrorMessage(fallback: "`encryptVerusData` failed with unknown error")
+            )
+        }
+        defer { zcashlc_free_encrypted_payload(ffiEncryptedPayloadPtr) }
+
+        let encryptedPayload = ffiEncryptedPayloadPtr.pointee
+
+        let ephemeralPublicKey =
+            Array(
+                UnsafeBufferPointer(
+                    start: encryptedPayload.ephemeral_public_key_ptr,
+                    count: Int(encryptedPayload.ephemeral_public_key_len)
+                )
+            )
+
+        let encryptedData =
+            Array(
+                UnsafeBufferPointer(
+                    start: encryptedPayload.encrypted_data_ptr,
+                    count: Int(encryptedPayload.encrypted_data_len)
+                )
+            )
+
+        let symmetricKey: [UInt8]?
+        if encryptedPayload.symmetric_key_ptr != nil, encryptedPayload.symmetric_key_len > 0 {
+            symmetricKey =
+                Array(
+                    UnsafeBufferPointer(
+                        start: encryptedPayload.symmetric_key_ptr,
+                        count: Int(encryptedPayload.symmetric_key_len)
+                    )
+                )
+        } else {
+            symmetricKey = nil
+        }
+
+        return EncryptedPayload(
+            ephemeralPublicKey: ephemeralPublicKey,
+            encryptedData: encryptedData,
+            symmetricKey: symmetricKey
+        )
+    }
     
     func deriveUnifiedFullViewingKey(from spendingKey: UnifiedSpendingKey) throws -> UnifiedFullViewingKey {
         let extfvk = try spendingKey.bytes.withUnsafeBufferPointer { uskBufferPtr -> UnsafeMutablePointer<CChar> in

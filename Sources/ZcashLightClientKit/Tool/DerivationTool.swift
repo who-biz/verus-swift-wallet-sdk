@@ -30,6 +30,8 @@ public protocol KeyDeriving {
 
     func zGetEncryptionAddress(seed: [UInt8]?, extsk: [UInt8]?, hdIndex: Int, encryptionIndex: Int, fromId: [UInt8]?, toId: [UInt8]?, returnSecret: Bool) throws -> ChannelKeys
 
+    func encryptVerusData(address: [UInt8], dataToEncrypt: [UInt8], returnSsk: Bool) throws -> EncryptedPayload
+
     func deriveShieldedAddress(from ufvk: String) throws -> String
     
     /// Given a spending key, return the associated viewing key.
@@ -110,6 +112,13 @@ public class DerivationTool: KeyDeriving {
             ZcashError.derivationToolEncryptionAddressInvalidIndex
         }
         return try backend.zGetEncryptionAddress(seed: seed, extsk: extsk, hdIndex: hdIndex, encryptionIndex: encryptionIndex, fromId: fromId, toId: toId, returnSecret: returnSecret)
+    }
+
+    public func encryptVerusData(address: [UInt8], dataToEncrypt: [UInt8], returnSsk: Bool) throws -> EncryptedPayload {
+        guard address.count == 43 { throw
+            ZcashError.derivationToolEncryptInvalidAddressLength
+        }
+        return try backend.encryptVerusData(address: address, dataToEncrypt: dataToEncrypt, returnSsk: returnSsk)
     }
 
     public func receiverTypecodesFromUnifiedAddress(_ address: UnifiedAddress) throws -> [UnifiedAddress.ReceiverTypecodes] {
