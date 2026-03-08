@@ -316,7 +316,7 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
                     let addressPtr = ptrOrNil(address, addressBuf)
                     let dataPtr = ptrOrNil(dataToEncrypt, dataBuf)
 
-                    return zcashlc_encrypt_verus_data(
+                    return zcashlc_encrypt_vdata(
                         addressPtr,
                         addressLen,
                         dataPtr,
@@ -327,7 +327,7 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
             }
 
         guard let ffiEncryptedPayloadPtr else {
-            throw ZcashError.rustEncryptData(
+            throw ZcashError.rustEncryptVerusData(
                 lastErrorMessage(fallback: "`encryptVerusData` failed with unknown error")
             )
         }

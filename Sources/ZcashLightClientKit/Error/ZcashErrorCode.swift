@@ -192,7 +192,7 @@ public enum ZcashErrorCode: String {
     ///  Error from rust layer when calling ZcashRustBackend.deriveSaplingSpendingKey
     case rustGetEncryptionAddress = "ZRUST0064"
     ///  Error from rust layer when calling ZcashRustBackend.zGetEncryptionAddress
-    case rustGetEncryptionAddress = "ZRUST0065"
+    case rustEncryptVerusData = "ZRUST0065"
     ///  Error from rust layer when calling ZcashRustBackend.encryptVerusData
     case accountDAOGetAll = "ZADAO0001"
     /// Fetched accounts from SQLite but can't decode them.
@@ -273,6 +273,8 @@ public enum ZcashErrorCode: String {
     case derivationToolSpendingKeyInvalidAccount = "ZDRVT0001"
     /// Invalid index (hdIndex or encryptionIndex) used when deriving encryption address
     case derivationToolEncryptionAddressInvalidIndex = "ZDRVT0002"
+    /// Invalid length for address bytes when calling encryptVerusData.
+    case derivationToolEncryptAddressInvalidLength = "ZDRVT0003"
     /// Creation of the table for unspent transaction output failed.
     case unspentTransactionOutputDAOCreateTable = "ZUTOD0001"
     /// SQLite query failed when storing unspent transaction output.

@@ -115,8 +115,8 @@ public class DerivationTool: KeyDeriving {
     }
 
     public func encryptVerusData(address: [UInt8], dataToEncrypt: [UInt8], returnSsk: Bool) throws -> EncryptedPayload {
-        guard address.count == 43 { throw
-            ZcashError.derivationToolEncryptInvalidAddressLength
+        guard address.count == 43 else { throw
+            ZcashError.derivationToolEncryptAddressInvalidLength
         }
         return try backend.encryptVerusData(address: address, dataToEncrypt: dataToEncrypt, returnSsk: returnSsk)
     }
