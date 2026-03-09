@@ -37,6 +37,10 @@ public struct EncryptedPayload: Equatable, Undescribable {
     let symmetricKey: [UInt8]?
 }
 
+public struct DecryptedData: Equatable, Undescribable {
+    let data: [UInt8]
+}
+
 /// Sapling Extended Spending Key
 public struct SaplingExtendedSpendingKey: Equatable, StringEncoded, Undescribable {
     let encoding: String

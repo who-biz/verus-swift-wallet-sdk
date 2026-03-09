@@ -32,6 +32,8 @@ public protocol KeyDeriving {
 
     func encryptVerusData(address: [UInt8], dataToEncrypt: [UInt8], returnSsk: Bool) throws -> EncryptedPayload
 
+    func decryptVerusData(incomingViewingKey: [UInt8]?, ephemeralPublicKey: [UInt8]?, dataToDecrypt: [UInt8], symmetricKey: [UInt8]?) throws -> DecryptedData
+
     func deriveShieldedAddress(from ufvk: String) throws -> String
     
     /// Given a spending key, return the associated viewing key.
@@ -119,6 +121,14 @@ public class DerivationTool: KeyDeriving {
             ZcashError.derivationToolEncryptAddressInvalidLength
         }
         return try backend.encryptVerusData(address: address, dataToEncrypt: dataToEncrypt, returnSsk: returnSsk)
+    }
+
+    public func decryptVerusData(incomingViewingKey: [UInt8]?, ephemeralPublicKey: [UInt8]?, dataToDecrypt: [UInt8], symmetricKey: [UInt8]?) throws -> DecryptedData {
+         //TODO: check the logic below, not sure we can use Uint32.Max like this here. a guess
+         guard dataToDecrypt.count < UInt32.Max else { throw
+            ZcashError.derivationToolEncryptionDataInvalidLength
+        }
+        return try backend.decryptVerusData(incomingViewingKey: incomingViewingKey, ephemeralPublicKey: ephemeralPublicKey, dataToDecrypt: dataToDecrypt, symmetricKey: symmetricKey)
     }
 
     public func receiverTypecodesFromUnifiedAddress(_ address: UnifiedAddress) throws -> [UnifiedAddress.ReceiverTypecodes] {

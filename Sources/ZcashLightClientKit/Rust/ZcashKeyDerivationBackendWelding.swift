@@ -70,6 +70,8 @@ protocol ZcashKeyDerivationBackendWelding {
 
     func encryptVerusData(address: [UInt8], dataToEncrypt: [UInt8], returnSsk: Bool) throws -> EncryptedPayload
     
+    func decryptVerusData(incomingViewingKey: [UInt8]?, ephemeralPublicKey: [UInt8]?, dataToDecrypt: [UInt8], symmetricKey: [UInt8]?) throws -> DecryptedData
+    
     /// Derives a `UnifiedFullViewingKey` from a `UnifiedSpendingKey`
     /// - Parameter spendingKey: the `UnifiedSpendingKey` to derive from
     /// - Returns: the derived `UnifiedFullViewingKey`

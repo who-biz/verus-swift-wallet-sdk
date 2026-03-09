@@ -253,7 +253,7 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
             }
         guard let ffiChannelKeysPtr else {
             throw ZcashError.rustGetEncryptionAddress( //placeholder
-                lastErrorMessage(fallback: "`zGetEncyptionAddress` failed with unknown error")
+                lastErrorMessage(fallback: "`zGetEncryptionAddress` failed with unknown error")
             )
         }
         defer { zcashlc_free_channel_keys(ffiChannelKeysPtr) }
@@ -371,6 +371,17 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
         )
     }
     
+    func encryptVerusData(
+        IncomingViewingKey: [UInt8]?,
+        ephemeralPublicKey: [UInt8]?,
+        dataToDecrypt: [UInt8],
+        symmetricKey: [UInt8]?
+    ) throws -> DecryptedData {
+
+        //TODO: add function body
+
+    }
+
     func deriveUnifiedFullViewingKey(from spendingKey: UnifiedSpendingKey) throws -> UnifiedFullViewingKey {
         let extfvk = try spendingKey.bytes.withUnsafeBufferPointer { uskBufferPtr -> UnsafeMutablePointer<CChar> in
             guard let extfvk = zcashlc_spending_key_to_full_viewing_key(
