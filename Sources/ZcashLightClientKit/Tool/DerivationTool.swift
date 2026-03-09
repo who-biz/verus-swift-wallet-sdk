@@ -124,8 +124,7 @@ public class DerivationTool: KeyDeriving {
     }
 
     public func decryptVerusData(incomingViewingKey: [UInt8]?, ephemeralPublicKey: [UInt8]?, dataToDecrypt: [UInt8], symmetricKey: [UInt8]?) throws -> DecryptedData {
-         //TODO: check the logic below, not sure we can use Uint32.Max like this here. a guess
-         guard dataToDecrypt.count < UInt32.Max else { throw
+         guard dataToDecrypt.count < UInt32.max else { throw
             ZcashError.derivationToolEncryptionDataInvalidLength
         }
         return try backend.decryptVerusData(incomingViewingKey: incomingViewingKey, ephemeralPublicKey: ephemeralPublicKey, dataToDecrypt: dataToDecrypt, symmetricKey: symmetricKey)
