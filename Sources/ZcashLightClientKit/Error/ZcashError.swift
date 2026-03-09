@@ -1018,7 +1018,7 @@ public enum ZcashError: Equatable, Error {
         case .synchronizerSpendingKeyDoesNotBelongToTheWallet: return .synchronizerSpendingKeyDoesNotBelongToTheWallet
         case .derivationToolEncryptionAddressInvalidIndex: return .derivationToolEncryptionAddressInvalidIndex
         case .derivationToolEncryptAddressInvalidLength: return .derivationToolEncryptAddressInvalidLength
-        case .derivationToolEncryptionDataInvalidIndex: return .derivationToolEncryptionAddressInvalidIndex
+        case .derivationToolEncryptionDataInvalidLength: return .derivationToolEncryptionDataInvalidLength
         case .rustGetEncryptionAddress: return .rustGetEncryptionAddress
         case .rustEncryptVerusData: return .rustEncryptVerusData
         case .rustDecryptVerusData: return .rustDecryptVerusData
