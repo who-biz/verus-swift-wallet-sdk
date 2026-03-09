@@ -371,15 +371,72 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
         )
     }
     
-    func encryptVerusData(
+    func decryptVerusData(
         IncomingViewingKey: [UInt8]?,
         ephemeralPublicKey: [UInt8]?,
         dataToDecrypt: [UInt8],
         symmetricKey: [UInt8]?
     ) throws -> DecryptedData {
+        let ivkLen: UInt = UInt(IncomingViewingKey?.count ?? 0)
+        let epkLen: UInt = UInt(ephemeralPublicKey?.count ?? 0)
+        let dataLen: UInt32 = UInt32(dataToDecrypt.count)
+        let sskLen: UInt = UInt(symmetricKey?.count ?? 0)
 
-        //TODO: add function body
+        @inline(__always)
+        func ptrOrNil(_ array: [UInt8]?, _ buf: UnsafeRawBufferPointer) -> UnsafePointer<UInt8>? {
+            guard let array, !array.isEmpty else { return nil }
+            return buf.baseAddress?.assumingMemoryBound(to: UInt8.self)
+        }
 
+        let ivkArray = IncomingViewingKey ?? []
+        let epkArray = ephemeralPublicKey ?? []
+        let sskArray = symmetricKey ?? []
+
+        let ffiByteBufferPtr: UnsafeMutablePointer<FFIByteBuffer>? =
+            ivkArray.withUnsafeBytes { ivkBuf -> UnsafeMutablePointer<FFIByteBuffer>? in
+                epkArray.withUnsafeBytes { epkBuf -> UnsafeMutablePointer<FFIByteBuffer>? in
+                    dataToDecrypt.withUnsafeBytes { dataBuf -> UnsafeMutablePointer<FFIByteBuffer>? in
+                        sskArray.withUnsafeBytes { sskBuf -> UnsafeMutablePointer<FFIByteBuffer>? in
+                            let ivkPtr = ptrOrNil(IncomingViewingKey, ivkBuf)
+                            let epkPtr = ptrOrNil(ephemeralPublicKey, epkBuf)
+                            let dataPtr = dataBuf.baseAddress?.assumingMemoryBound(to: UInt8.self)
+                            let sskPtr = ptrOrNil(symmetricKey, sskBuf)
+
+                            return zcashlc_decrypt_vdata(
+                                ivkPtr,
+                                ivkLen,
+                                epkPtr,
+                                epkLen,
+                                dataPtr,
+                                dataLen,
+                                sskPtr,
+                                sskLen
+                            )
+                        }
+                    }
+                }
+            }
+
+        guard let ffiByteBufferPtr else {
+            throw ZcashError.rustDecryptData(
+                lastErrorMessage(fallback: "`decryptVerusData` failed with unknown error")
+            )
+        }
+        defer { zcashlc_free_byte_buffer(ffiByteBufferPtr) }
+
+        let byteBuffer = ffiByteBufferPtr.pointee
+
+        let decryptedBytes =
+            Array(
+                UnsafeBufferPointer(
+                    start: byteBuffer.ptr,
+                    count: Int(byteBuffer.len)
+                )
+            )
+
+        return DecryptedData(
+            decryptedData: decryptedBytes
+        )
     }
 
     func deriveUnifiedFullViewingKey(from spendingKey: UnifiedSpendingKey) throws -> UnifiedFullViewingKey {
