@@ -372,12 +372,12 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
     }
     
     func decryptVerusData(
-        IncomingViewingKey: [UInt8]?,
+        incomingViewingKey: [UInt8]?,
         ephemeralPublicKey: [UInt8]?,
         dataToDecrypt: [UInt8],
         symmetricKey: [UInt8]?
     ) throws -> DecryptedData {
-        let ivkLen: UInt = UInt(IncomingViewingKey?.count ?? 0)
+        let ivkLen: UInt = UInt(incomingViewingKey?.count ?? 0)
         let epkLen: UInt = UInt(ephemeralPublicKey?.count ?? 0)
         let dataLen: UInt32 = UInt32(dataToDecrypt.count)
         let sskLen: UInt = UInt(symmetricKey?.count ?? 0)
@@ -388,16 +388,16 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
             return buf.baseAddress?.assumingMemoryBound(to: UInt8.self)
         }
 
-        let ivkArray = IncomingViewingKey ?? []
+        let ivkArray = incomingViewingKey ?? []
         let epkArray = ephemeralPublicKey ?? []
         let sskArray = symmetricKey ?? []
 
-        let ffiByteBufferPtr: UnsafeMutablePointer<FFIByteBuffer>? =
-            ivkArray.withUnsafeBytes { ivkBuf -> UnsafeMutablePointer<FFIByteBuffer>? in
-                epkArray.withUnsafeBytes { epkBuf -> UnsafeMutablePointer<FFIByteBuffer>? in
-                    dataToDecrypt.withUnsafeBytes { dataBuf -> UnsafeMutablePointer<FFIByteBuffer>? in
-                        sskArray.withUnsafeBytes { sskBuf -> UnsafeMutablePointer<FFIByteBuffer>? in
-                            let ivkPtr = ptrOrNil(IncomingViewingKey, ivkBuf)
+        let ffiByteBufferPtr: UnsafeMutablePointer<FfiByteBuffer>? =
+            ivkArray.withUnsafeBytes { ivkBuf -> UnsafeMutablePointer<FfiByteBuffer>? in
+                epkArray.withUnsafeBytes { epkBuf -> UnsafeMutablePointer<FfiByteBuffer>? in
+                    dataToDecrypt.withUnsafeBytes { dataBuf -> UnsafeMutablePointer<FfiByteBuffer>? in
+                        sskArray.withUnsafeBytes { sskBuf -> UnsafeMutablePointer<FfiByteBuffer>? in
+                            let ivkPtr = ptrOrNil(incomingViewingKey, ivkBuf)
                             let epkPtr = ptrOrNil(ephemeralPublicKey, epkBuf)
                             let dataPtr = dataBuf.baseAddress?.assumingMemoryBound(to: UInt8.self)
                             let sskPtr = ptrOrNil(symmetricKey, sskBuf)
@@ -418,11 +418,11 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
             }
 
         guard let ffiByteBufferPtr else {
-            throw ZcashError.rustDecryptData(
+            throw ZcashError.rustDecryptVerusData(
                 lastErrorMessage(fallback: "`decryptVerusData` failed with unknown error")
             )
         }
-        defer { zcashlc_free_byte_buffer(ffiByteBufferPtr) }
+        defer { zcashlc_free_byte_buffer_ptr(ffiByteBufferPtr) }
 
         let byteBuffer = ffiByteBufferPtr.pointee
 
@@ -435,7 +435,7 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
             )
 
         return DecryptedData(
-            decryptedData: decryptedBytes
+            data: decryptedBytes
         )
     }
 
