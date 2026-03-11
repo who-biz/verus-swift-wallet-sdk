@@ -120,11 +120,20 @@ public class DerivationTool: KeyDeriving {
         guard address.count == 43 else { throw
             ZcashError.derivationToolEncryptAddressInvalidLength
         }
+        guard dataToEncrypt.count < UInt32.max else { throw
+            ZcashError.derivationToolEncryptionDataInvalidLength
+        }
+        guard dataToEncrypt.count > 0 else { throw
+            ZcashError.derivationToolEncryptionDataInvalidLength
+        }
         return try backend.encryptVerusData(address: address, dataToEncrypt: dataToEncrypt, returnSsk: returnSsk)
     }
 
     public func decryptVerusData(incomingViewingKey: [UInt8]?, ephemeralPublicKey: [UInt8]?, dataToDecrypt: [UInt8], symmetricKey: [UInt8]?) throws -> DecryptedData {
-         guard dataToDecrypt.count < UInt32.max else { throw
+        guard dataToDecrypt.count < UInt32.max else { throw
+            ZcashError.derivationToolEncryptionDataInvalidLength
+        }
+        guard dataToDecrypt.count > 0 else { throw
             ZcashError.derivationToolEncryptionDataInvalidLength
         }
         return try backend.decryptVerusData(incomingViewingKey: incomingViewingKey, ephemeralPublicKey: ephemeralPublicKey, dataToDecrypt: dataToDecrypt, symmetricKey: symmetricKey)
