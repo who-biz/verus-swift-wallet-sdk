@@ -15,6 +15,11 @@ public enum Bech32DecodingError: Error {
   case invalidPadding
 }
 
+public enum Bech32EncodingError: Error {
+  case invalidData
+  case invalidDataLength
+}
+
 public struct Bech32 {
   private static let charset = Array("qpzry9x8gf2tvdw0s3jn54khce6mua7l")
   private static let gen: [UInt32] = [
@@ -71,7 +76,28 @@ public struct Bech32 {
     return (hrp, bytes)
   }
 
+  static func encode(hrp: String, data: [UInt8]) throws -> String {
+    guard let fiveBit = convertBits(data, from: 8, to: 5, pad: true) else {
+      throw Bech32EncodingError.invalidData
+    }
+
+    let checksum = createChecksumBech32Only(hrp: hrp, data: fiveBit)
+    let combined = fiveBit + checksum
+
+    var ret = hrp.lowercased() + "1"
+    ret.reserveCapacity(hrp.count + 1 + combined.count)
+    for v in combined { ret.append(charset[Int(v)]) }
+    return ret
+  }
+
   // Internals
+
+  private static func createChecksumBech32Only(hrp: String, data: [UInt8]) -> [UInt8] {
+    let values = hrpExpand(hrp.lowercased()) + data + [UInt8](repeating: 0, count: 6)
+    let pm = polymod(values) ^ BECH32_CONST
+    return (0..<6).map { i in UInt8((pm >> (5 * (5 - i))) & 0x1f) }
+  }
+
   private static func hrpExpand(_ hrp: String) -> [UInt8] {
     let bytes = hrp.utf8.map { $0 }
     var res: [UInt8] = bytes.map { $0 >> 5 }

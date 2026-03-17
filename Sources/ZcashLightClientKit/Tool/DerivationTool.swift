@@ -28,6 +28,12 @@ public protocol KeyDeriving {
     
     func deriveSaplingSpendingKey(seed: [UInt8], accountIndex: Int) throws -> SaplingSpendingKey
 
+    func zGetEncryptionAddress(seed: [UInt8]?, extsk: [UInt8]?, hdIndex: Int, encryptionIndex: Int, fromId: [UInt8]?, toId: [UInt8]?, returnSecret: Bool) throws -> ChannelKeys
+
+    func encryptVerusData(address: [UInt8], dataToEncrypt: [UInt8], returnSsk: Bool) throws -> EncryptedPayload
+
+    func decryptVerusData(incomingViewingKey: [UInt8]?, ephemeralPublicKey: [UInt8]?, dataToDecrypt: [UInt8], symmetricKey: [UInt8]?) throws -> DecryptedData
+
     func deriveShieldedAddress(from ufvk: String) throws -> String
     
     /// Given a spending key, return the associated viewing key.
@@ -98,7 +104,41 @@ public class DerivationTool: KeyDeriving {
         guard accountIndex >= 0, let accountIndex = Int32(exactly: accountIndex) else { throw ZcashError.derivationToolSpendingKeyInvalidAccount }
         return try backend.deriveSaplingSpendingKey(seed: seed, accountIndex: accountIndex)
     }
-    
+
+    public func zGetEncryptionAddress(seed: [UInt8]?, extsk: [UInt8]?, hdIndex: Int, encryptionIndex: Int, fromId: [UInt8]?, toId: [UInt8]?, returnSecret: Bool) throws -> ChannelKeys {
+        //TODO: add error types for narrowing failure in Int->Int32 conversion below
+        guard hdIndex >= -1, let hdIndex = Int32(exactly: hdIndex) else { throw
+            ZcashError.derivationToolEncryptionAddressInvalidIndex
+        }
+        guard encryptionIndex >= 0, let encryptionIndex = Int32(exactly: encryptionIndex) else { throw
+            ZcashError.derivationToolEncryptionAddressInvalidIndex
+        }
+        return try backend.zGetEncryptionAddress(seed: seed, extsk: extsk, hdIndex: hdIndex, encryptionIndex: encryptionIndex, fromId: fromId, toId: toId, returnSecret: returnSecret)
+    }
+
+    public func encryptVerusData(address: [UInt8], dataToEncrypt: [UInt8], returnSsk: Bool) throws -> EncryptedPayload {
+        guard address.count == 43 else { throw
+            ZcashError.derivationToolEncryptAddressInvalidLength
+        }
+        guard dataToEncrypt.count < UInt32.max else { throw
+            ZcashError.derivationToolEncryptionDataInvalidLength
+        }
+        guard dataToEncrypt.count > 0 else { throw
+            ZcashError.derivationToolEncryptionDataInvalidLength
+        }
+        return try backend.encryptVerusData(address: address, dataToEncrypt: dataToEncrypt, returnSsk: returnSsk)
+    }
+
+    public func decryptVerusData(incomingViewingKey: [UInt8]?, ephemeralPublicKey: [UInt8]?, dataToDecrypt: [UInt8], symmetricKey: [UInt8]?) throws -> DecryptedData {
+        guard dataToDecrypt.count < UInt32.max else { throw
+            ZcashError.derivationToolEncryptionDataInvalidLength
+        }
+        guard dataToDecrypt.count > 0 else { throw
+            ZcashError.derivationToolEncryptionDataInvalidLength
+        }
+        return try backend.decryptVerusData(incomingViewingKey: incomingViewingKey, ephemeralPublicKey: ephemeralPublicKey, dataToDecrypt: dataToDecrypt, symmetricKey: symmetricKey)
+    }
+
     public func receiverTypecodesFromUnifiedAddress(_ address: UnifiedAddress) throws -> [UnifiedAddress.ReceiverTypecodes] {
         return try backend.receiverTypecodesOnUnifiedAddress(address.stringEncoded)
             .map { UnifiedAddress.ReceiverTypecodes(typecode: $0) }
@@ -205,6 +245,7 @@ public extension UnifiedSpendingKey {
     }
 }
 
+//TODO: check if we need equivalent for ChannelKeys
 public extension SaplingSpendingKey {
     func map<T>(_ transform: (SaplingSpendingKey) throws -> T) rethrows -> T {
         try transform(self)
