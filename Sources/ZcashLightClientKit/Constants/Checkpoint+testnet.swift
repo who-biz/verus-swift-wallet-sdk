@@ -11,7 +11,7 @@ extension Checkpoint {
     static let testnetMin = Checkpoint(
         height: 1,
         hash: "000004c52f3047ccc50d71a6b2a9a035fafd2605cc5b49c2c1d07a202a7d3b33",
-        time: 1712527210,,
+        time: 1712527210,
         saplingTree: "000000",
         orchardTree: nil
     )
