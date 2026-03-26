@@ -47,7 +47,7 @@ extension NetworkType {
         case .mainnet:
             return "VRSC"
         case .testnet:
-            return "test"
+            return "VRSCTEST"
         }
     }
 }
