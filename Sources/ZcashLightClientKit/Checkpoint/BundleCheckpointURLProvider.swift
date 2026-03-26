@@ -40,7 +40,7 @@ extension BundleCheckpointURLProvider {
         switch networkType {
         case .mainnet:
             return Bundle.module.url(
-                forResource: "419200",
+                forResource: "227520",
                 withExtension: "json",
                 subdirectory: "checkpoints/mainnet/",
                 localization: nil
@@ -48,7 +48,7 @@ extension BundleCheckpointURLProvider {
             .deletingLastPathComponent() ?? Checkpoint.mainnetCheckpointDirectory
         case .testnet:
             return Bundle.module.url(
-                forResource: "280000",
+                forResource: "1",
                 withExtension: "json",
                 subdirectory: "checkpoints/testnet/",
                 localization: nil

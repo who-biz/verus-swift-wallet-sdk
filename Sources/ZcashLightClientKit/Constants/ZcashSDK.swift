@@ -26,9 +26,9 @@ public enum NetworkType {
 extension NetworkType {
     static func forChainName(_ chainame: String) -> NetworkType? {
         switch chainame {
-        case "test":    return .testnet
-        case "VRSC":    return .mainnet
-        default:        return nil
+        case "VRSCTEST":    return .testnet
+        case "VRSC":        return .mainnet
+        default:            return nil
         }
     }
     
@@ -47,7 +47,7 @@ extension NetworkType {
         case .mainnet:
             return "VRSC"
         case .testnet:
-            return "test"
+            return "VRSCTEST"
         }
     }
 }

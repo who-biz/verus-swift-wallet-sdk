@@ -9,9 +9,9 @@ import Foundation
 
 extension Checkpoint {
     static let testnetMin = Checkpoint(
-        height: 280000,
-        hash: "000420e7fcc3a49d729479fb0b560dd7b8617b178a08e9e389620a9d1dd6361a",
-        time: 1535262293,
+        height: 1,
+        hash: "000004c52f3047ccc50d71a6b2a9a035fafd2605cc5b49c2c1d07a202a7d3b33",
+        time: 1712527210,
         saplingTree: "000000",
         orchardTree: nil
     )
