@@ -201,13 +201,11 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
         returnSecret: Bool
     ) throws -> ChannelKeys {
 
-        // Break up the expression: counts first
         let seedLen: UInt = UInt(seed?.count ?? 0)
         let extskLen: UInt = UInt(extsk?.count ?? 0)
         let fromLen: UInt = UInt(fromId?.count ?? 0)
         let toLen: UInt = UInt(toId?.count ?? 0)
 
-        // Small helper to derive a UInt8* (or nil) from an optional array + its buffer
         @inline(__always)
         func ptrOrNil(_ array: [UInt8]?, _ buf: UnsafeRawBufferPointer) -> UnsafePointer<UInt8>? {
             guard let array, !array.isEmpty else { return nil }
@@ -220,7 +218,6 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
         let fromArray = fromId ?? []
         let toArray = toId ?? []
 
-        // Nested closures are still required to keep pointers valid, but each step is simpler.
         let ffiChannelKeysPtr: UnsafeMutablePointer<FfiChannelKeys>? =
             seedArray.withUnsafeBytes { seedBuf -> UnsafeMutablePointer<FfiChannelKeys>? in
                 extskArray.withUnsafeBytes { extskBuf -> UnsafeMutablePointer<FfiChannelKeys>? in
@@ -269,7 +266,9 @@ struct ZcashKeyDerivationBackend: ZcashKeyDerivationBackendWelding {
             // throw error, invalid string encoding for address
             // just mirroring TransparentAddress etc logic below, here
             //TODO: rename below properly, placeholder for now
-            throw ZcashError.rustDeriveUnifiedFullViewingKeyInvalidDerivedKey
+            throw ZcashError.rustGetEncryptionAddress(
+                lastErrorMessage(fallback: "`zGetEncryptionAddress` failed to encode address as string")
+            )
         }
 
         let fullViewingKey =
