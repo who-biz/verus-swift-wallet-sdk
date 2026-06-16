@@ -376,7 +376,8 @@ struct TreeState {
   var time: UInt32 = 0
 
   /// sapling commitment tree state
-  var saplingTree: String = String()
+  var tree: String = String()
+  //var saplingTree: String = String()
 
   /// orchard commitment tree state
   var orchardTree: String = String()
@@ -1112,8 +1113,9 @@ extension TreeState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     2: .same(proto: "height"),
     3: .same(proto: "hash"),
     4: .same(proto: "time"),
-    5: .same(proto: "saplingTree"),
-    6: .same(proto: "orchardTree"),
+    5: .same(proto: "tree"),
+//    5: .same(proto: "saplingTree"),
+//    6: .same(proto: "orchardTree"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1126,8 +1128,9 @@ extension TreeState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.height) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.hash) }()
       case 4: try { try decoder.decodeSingularUInt32Field(value: &self.time) }()
-      case 5: try { try decoder.decodeSingularStringField(value: &self.saplingTree) }()
-      case 6: try { try decoder.decodeSingularStringField(value: &self.orchardTree) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self.tree) }()
+//      case 5: try { try decoder.decodeSingularStringField(value: &self.saplingTree) }()
+//      case 6: try { try decoder.decodeSingularStringField(value: &self.orchardTree) }()
       default: break
       }
     }
@@ -1146,12 +1149,16 @@ extension TreeState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     if self.time != 0 {
       try visitor.visitSingularUInt32Field(value: self.time, fieldNumber: 4)
     }
-    if !self.saplingTree.isEmpty {
+    if !self.tree.isEmpty {
+      try visitor.visitSingularStringField(value: self.tree, fieldNumber: 5)
+    }
+/*    if !self.saplingTree.isEmpty {
       try visitor.visitSingularStringField(value: self.saplingTree, fieldNumber: 5)
     }
     if !self.orchardTree.isEmpty {
       try visitor.visitSingularStringField(value: self.orchardTree, fieldNumber: 6)
     }
+*/
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1160,8 +1167,9 @@ extension TreeState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     if lhs.height != rhs.height {return false}
     if lhs.hash != rhs.hash {return false}
     if lhs.time != rhs.time {return false}
-    if lhs.saplingTree != rhs.saplingTree {return false}
-    if lhs.orchardTree != rhs.orchardTree {return false}
+    if lhs.tree != rhs.tree {return false}
+    //if lhs.saplingTree != rhs.saplingTree {return false}
+    //if lhs.orchardTree != rhs.orchardTree {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

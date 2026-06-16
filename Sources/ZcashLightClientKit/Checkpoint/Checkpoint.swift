@@ -29,8 +29,9 @@ struct Checkpoint: Equatable {
     let height: BlockHeight
     let hash: String
     let time: UInt32
-    let saplingTree: String
-    let orchardTree: String?
+    let tree: String
+    //let saplingTree: String
+    //let orchardTree: String?
 }
 
 extension Checkpoint: Decodable {
@@ -38,8 +39,9 @@ extension Checkpoint: Decodable {
         case height
         case hash
         case time
-        case saplingTree
-        case orchardTree
+        case tree
+        //case saplingTree
+        //case orchardTree
     }
 
     public init(from decoder: Decoder) throws {
@@ -48,8 +50,9 @@ extension Checkpoint: Decodable {
             self.height = try Self.getHeight(from: container)
             self.hash = try container.decode(String.self, forKey: .hash)
             self.time = try container.decode(UInt32.self, forKey: .time)
-            self.saplingTree = try container.decode(String.self, forKey: .saplingTree)
-            self.orchardTree = try container.decodeIfPresent(String.self, forKey: .orchardTree)
+            self.tree = try container.decode(String.self, forKey: .tree)
+            //self.saplingTree = try container.decode(String.self, forKey: .saplingTree)
+            //self.orchardTree = try container.decodeIfPresent(String.self, forKey: .orchardTree)
         } catch {
             throw ZcashError.checkpointDecode(error)
         }
@@ -77,10 +80,11 @@ extension Checkpoint: Decodable {
         ret.height = UInt64(height)
         ret.hash = hash
         ret.time = time
-        ret.saplingTree = saplingTree
+        ret.tree = tree
+        /*ret.saplingTree = saplingTree
         if let tree = orchardTree {
             ret.orchardTree = tree
-        }
+        }*/
         return ret
     }
 }
