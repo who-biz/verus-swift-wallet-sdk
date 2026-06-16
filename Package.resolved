@@ -120,10 +120,10 @@
     {
       "identity" : "verus-light-client-ffi",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/VerusCoin/verus-lightclient-ffi",
+      "location" : "https://github.com/who-biz/verus-lightclient-ffi",
       "state" : {
         "branch" : "master",
-        "revision" : "860e4fe7827fa12ea7c2b42766df88e8747bf0ae"
+        "revision" : "88809cfc85fd57b8766c6d0c0084e6cddbaa62b1"
       }
     }
   ],
