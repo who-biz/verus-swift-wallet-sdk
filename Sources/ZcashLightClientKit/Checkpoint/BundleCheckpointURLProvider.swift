@@ -42,7 +42,7 @@ extension BundleCheckpointURLProvider {
             return Bundle.module.url(
                 forResource: "227520",
                 withExtension: "json",
-                subdirectory: "checkpoints/mainnet/",
+                subdirectory: "checkpoints/vrsc/",
                 localization: nil
             )?
             .deletingLastPathComponent() ?? Checkpoint.mainnetCheckpointDirectory
@@ -50,7 +50,7 @@ extension BundleCheckpointURLProvider {
             return Bundle.module.url(
                 forResource: "1",
                 withExtension: "json",
-                subdirectory: "checkpoints/testnet/",
+                subdirectory: "checkpoints/vrsctest/",
                 localization: nil
             )?
             .deletingLastPathComponent() ?? Checkpoint.testnetCheckpointDirectory
